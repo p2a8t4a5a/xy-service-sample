@@ -10,7 +10,8 @@
         <relativePath />
     </parent>
     <artifactId>service-sample</artifactId>
-    <version>1.0</version>
+    <!-- 当前版本号1.0，如果1.0稳定后，继续开发1.1，则将版本号改成1.1 -->
+    <version>1.1</version>
     <packaging>jar</packaging>
     <name>service-sample</name>
     <description>service-sample</description>
@@ -21,6 +22,8 @@
 
     <properties>
         <skipTests>true</skipTests>
+        <!--当common版本号变更时，此处也发生变更 -->
+        <common.version>1.0</common.version>
     </properties>
 
     <dependencyManagement>
@@ -40,7 +43,7 @@
         <dependency>
             <groupId>com.sc</groupId>
             <artifactId>common</artifactId>
-            <version>1.0</version>
+            <version>${common.version}</version>
         </dependency>
         <!-- spring boot -->
         <dependency>
