@@ -4,7 +4,7 @@ spring:
   application:
     name: service-sample
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/userinfo?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://127.0.0.1:3306/sample?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
   cloud:
     nacos:
       discovery:

@@ -10,7 +10,7 @@
         <relativePath />
     </parent>
     <artifactId>service-sample</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <name>service-sample</name>
     <description>service-sample</description>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>com.sc</groupId>
             <artifactId>common</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
         <!-- spring boot -->
         <dependency>
@@ -79,4 +79,14 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <!-- spring boot maven plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
