@@ -11,7 +11,7 @@
     </parent>
     <artifactId>service-sample</artifactId>
     <!-- 当前版本号1.0，如果1.0稳定后，继续开发1.1，则将版本号改成1.1 -->
-    <version>1.1</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <name>service-sample</name>
     <description>service-sample</description>
