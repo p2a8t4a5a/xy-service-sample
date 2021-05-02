@@ -73,6 +73,9 @@ public class FlRibbonClientSample {
      *      <clientName>.ribbon.NIWSServerListClassName=com.netflix.niws.loadbalancer.DiscoveryEnabledNIWSServerList
      *      # the server must register itself with Eureka server with VipAddress "myservice"
      *      <clientName>.ribbon.DeploymentContextBasedVipAddresses=myservice
+     *  4.Nacos,当使用nacos-discovery时，nacos提供了RibbonClient的配置
+     *  {@link com.alibaba.cloud.nacos.ribbon.RibbonNacosAutoConfiguration}
+     *
      *  and etc.
      */
 
