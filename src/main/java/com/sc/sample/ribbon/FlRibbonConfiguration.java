@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class FlRibbonConfiguration {
 
 
+    /*ribbon单独调试时打开
     @Bean
     public ServerList<Server> configurationBasedServerList() {
         ConfigurationBasedServerList serverList = new ConfigurationBasedServerList();
@@ -23,6 +24,6 @@ public class FlRibbonConfiguration {
         config.setProperty(CommonClientConfigKey.ListOfServers, "www.baidu.com,https://www.springcloud.cc/");
         serverList.initWithNiwsConfig(config);
         return serverList;
-    }
+    }*/
 
 }

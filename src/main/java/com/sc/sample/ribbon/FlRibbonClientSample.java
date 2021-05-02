@@ -3,8 +3,15 @@ package com.sc.sample.ribbon;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 
 /**
- * ribbon
- *  https://www.springcloud.cc/spring-cloud-greenwich.html#_circuit_breaker_hystrix_clients
+ * name属性指定RibbonClient的名称,每一个名称创建独立的ApplicationContext
+ * 1.configuration指定RibbonClient的配置类
+ * 默认配置类{@link org.springframework.cloud.netflix.ribbon.RibbonClientConfiguration},RibbonClient由RibbonClientConfiguration中已有的配置以及自定义中的配置组成(其中后者通常会覆盖前者)
+ * 2.RibbonClient的配置: application.yml
+ *  <clientName>:  ##RibbonClient的名称
+ *    ribbon:
+ *      NFLoadBalancerClassName: ILoadBalancer
+ *  ribbon:   ##如果不加<clientName>将对所有的RibbonClient有效
+ *    NFLoadBalancerClassName: ILoadBalancer
  */
 @RibbonClient(name = "flRibbonClientSample", configuration = FlRibbonConfiguration.class)
 public class FlRibbonClientSample {

@@ -10,8 +10,24 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.Future;
 
 /**
- * Hystrix
- *  https://www.springcloud.cc/spring-cloud-greenwich.html#_circuit_breaker_hystrix_clients
+ * commandKey属性指定HystrixCommand的唯一ID,默认取方法名称
+ * threadPoolKey属性表示线程池的标记，默认类名称(一个类创建一个线程池?)
+ * fallbackMethod属性指定fallback
+ * commandProperties属性指定Hystrix配置
+ *  eg: commandProperties = {
+ *             @HystrixProperty(name = "execution.isolation.strategy", value = "THREAD")}
+ *  the same as application.yml:
+ *    hystrix:
+ *      command:
+ *        HystrixCommandKey:  ##HystrixCommand的CommandKey
+ *          execution:
+ *            isolation:
+ *              strategy: THREAD
+ *     hystrix:
+ *       command:
+ *         default:   ##使用default,对所有HystrixCommand有效
+ *           ...
+ * threadPoolProperties属性指定Hystrix线程池配置
  */
 @Component
 @Slf4j
