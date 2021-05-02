@@ -69,10 +69,10 @@ import java.util.List;
  *      enabled: true  ##开启feign的hystrix，并且类路径上有hystrix依赖
  *
  */
-/*@FeignClient(name = "flFeignClientSample",
+@FeignClient(name = "flFeignClientSample",
     configuration = {FlFeignClientConfiguration.class},
     fallback = FlFeignClientSampleFallback.class
-)*/
+)
 public interface FlFeignClientSample {
 
     /**
