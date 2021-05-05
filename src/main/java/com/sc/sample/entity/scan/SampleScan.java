@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Accessors(chain = true)
-public class Scan extends BaseEntity<Long> {
+public class SampleScan extends BaseEntity<Long> {
 
     private String name;
     private ScanTypeEnum scanType;

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScanVo {
+public class SampleScanVo {
     private Long id;
 
     private String name;
