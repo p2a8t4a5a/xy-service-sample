@@ -24,7 +24,7 @@ import java.util.List;
 @FeignClient(name = "service-sample2", fallbackFactory = Sample2ServiceApiFallbackFac.class, configuration = {FlFeignClientConfiguration.class})
 public interface Sample2ServiceApi {
 
-    @GetMapping("/sample2ScanRpc/get")
+    @GetMapping("/sample2ScanRpc/getById")
     BasicJsonResult<Sample2ScanBo> rpcGetById(@RequestParam("id") Long id);
 
     @GetMapping("/sample2ScanRpc/getByIds")
