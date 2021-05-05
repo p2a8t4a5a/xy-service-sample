@@ -67,7 +67,7 @@ public class ScanController {
     }
 
     /**
-     *
+     * Get请求的Enum中@JsonCreator
      * @param scanSelDto 如果未传PageDto.page或者PageDto.pageSize，取PageDto的默认值
      *                   如果PageDto.page<=0，最终的sql当作0，表示第一页
      *                   如果PageDto.pageSize<0, exception
@@ -91,6 +91,20 @@ public class ScanController {
                         .eq(Scan::getScanType, scanSelDto.getScanType())
                         .gt(Scan::getScanTime, scanSelDto.getScanTime()));*/
 
+        IPage<ScanVo> result = scanService.listByPojo(scanSelDto);
+
+        return JsonResult.buildSuccessResult(result);
+    }
+
+    /**
+     * compare with listByPojo, Get请求将参数放在请求体，使用@RequestBody解析请求体参数
+     * @param scanSelDto
+     * @return
+     */
+    @GetMapping("listByPojo2")
+    public JsonResult listByPojo2(@RequestBody ScanSelDto scanSelDto) {
+        AssertUtils.ifNull(scanSelDto, () -> "查询参数不能为空", () -> JsonResultEnum.FAIL.getCode());
+        AssertUtils.ifTrue(scanSelDto.getPageSize()<0, () -> "pageSize不能为负数", () -> JsonResultEnum.FAIL.getCode());
         IPage<ScanVo> result = scanService.listByPojo(scanSelDto);
 
         return JsonResult.buildSuccessResult(result);

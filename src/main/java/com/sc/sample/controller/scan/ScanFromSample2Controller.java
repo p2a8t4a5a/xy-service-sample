@@ -46,6 +46,16 @@ public class ScanFromSample2Controller {
         return result;
     }
 
+    //compare with listByPojo, Get请求将参数放在请求体，使用@RequestBody解析请求体参数
+    @GetMapping("listByPojo2")
+    public JsonResult listByPojo2(@RequestBody ScanPageBo scanPageBo) {
+        AssertUtils.ifNull(scanPageBo, () -> "查询参数不能为空", () -> JsonResultEnum.FAIL.getCode());
+        AssertUtils.ifTrue(scanPageBo.getPageSize()<0, () -> "pageSize不能为负数", () -> JsonResultEnum.FAIL.getCode());
+
+        JsonResult result = sample2ServiceApi.rpcListByPojo2(scanPageBo);
+        return result;
+    }
+
     @PostMapping("save")
     public JsonResult save(@RequestBody @Valid ScanAddBo scanAddBo) {
         JsonResult result = sample2ServiceApi.rpcSave(scanAddBo);

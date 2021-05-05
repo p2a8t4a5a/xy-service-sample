@@ -38,6 +38,12 @@ public class Sample2ServiceApiFallbackFac implements FallbackFactory<Sample2Serv
             }
 
             @Override
+            public BasicJsonResult<PageJsonResultVo<ScanBo>> rpcListByPojo2(ScanPageBo scanPageBo) {
+                throwable.printStackTrace();
+                return JsonResult.buildFailedBasicResult("rpcListByPojo2调用失败,Sample2Service");
+            }
+
+            @Override
             public JsonResult rpcSave(ScanAddBo scanAddBo) {
                 throwable.printStackTrace();
                 return JsonResult.buildFailedBasicResult("rpcSave调用失败,Sample2Service");

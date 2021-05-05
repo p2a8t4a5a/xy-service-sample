@@ -35,6 +35,11 @@ public class Sample2ServiceApiFallback implements Sample2ServiceApi {
     }
 
     @Override
+    public BasicJsonResult<PageJsonResultVo<ScanBo>> rpcListByPojo2(ScanPageBo scanPageBo) {
+        return JsonResult.buildFailedBasicResult("rpcListByPojo2调用失败,Sample2Service");
+    }
+
+    @Override
     public JsonResult rpcSave(ScanAddBo scanAddBo) {
         return JsonResult.buildFailedBasicResult("rpcSave调用失败,Sample2Service");
     }

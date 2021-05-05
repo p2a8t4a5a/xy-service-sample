@@ -26,6 +26,8 @@ public interface Sample2ServiceApi {
     BasicJsonResult<List<ScanBo>> rpcGetByIds(@RequestParam(name = "ids", required = false) List<Long> ids);
     @GetMapping("/scan2Api/listByPojo")
     BasicJsonResult<PageJsonResultVo<ScanBo>> rpcListByPojo(@SpringQueryMap ScanPageBo scanPageBo);
+    @GetMapping("/scan2Api/listByPojo2")//默认Feign not support Get RequestBody
+    BasicJsonResult<PageJsonResultVo<ScanBo>> rpcListByPojo2(@RequestBody ScanPageBo scanPageBo);
     @PostMapping("/scan2Api/save")
     JsonResult rpcSave(@RequestBody ScanAddBo scanAddBo);
 
