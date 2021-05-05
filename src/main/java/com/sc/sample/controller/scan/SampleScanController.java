@@ -186,6 +186,7 @@ public class SampleScanController {
         return result;
     }
 
+    //Get请求的Enum中@JsonCreator
     @GetMapping("listByParamsRpc")
     public JsonResult listByParamsRpc(@RequestParam(name = "id", required = false) Long id,
                                    @RequestParam(name = "scanType", required = false) ScanTypeEnum scanType,  //String convert to Enum, 使用默认的StringCovertToEnum
