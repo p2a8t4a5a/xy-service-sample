@@ -8,6 +8,7 @@ import com.sc.common.vo.BasicJsonResult;
 import com.sc.common.vo.JsonResult;
 import com.sc.common.vo.PageJsonResultVo;
 import com.sc.sample.api.fallback.Sample2ServiceApiFallbackFac;
+import com.sc.sample.feign.FlFeignClientConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 //@FeignClient(name = "service-sample2", fallback = Sample2ServiceApiFallback.class)
-@FeignClient(name = "service-sample2", fallbackFactory = Sample2ServiceApiFallbackFac.class)
+@FeignClient(name = "service-sample2", fallbackFactory = Sample2ServiceApiFallbackFac.class, configuration = {FlFeignClientConfiguration.class})
 public interface Sample2ServiceApi {
 
     @GetMapping("/sample2ScanRpc/get")
@@ -29,13 +30,13 @@ public interface Sample2ServiceApi {
     @GetMapping("/sample2ScanRpc/getByIds")
     BasicJsonResult<List<Sample2ScanBo>> rpcGetByIds(@RequestParam(name = "ids", required = false) List<Long> ids);
 
-    @GetMapping("/sample2ScanRpc/listByPojo") //BuildTemplateByResolvingArgs.addQueryMapQueryParameters: Get请求参数拼接
+    @GetMapping("/sample2ScanRpc/listByPojo") //pojo参数在Get请求中的参数转化 @see ReflectiveFeign.create(Object[] argv), 支持度不高
     BasicJsonResult<PageJsonResultVo<Sample2ScanBo>> rpcListByPojo(@SpringQueryMap Sample2ScanPageBo scanPageBo);
 
     @GetMapping("/sample2ScanRpc/listByPojo2")//默认Feign not support Get RequestBody
     BasicJsonResult<PageJsonResultVo<Sample2ScanBo>> rpcListByPojo2(@RequestBody Sample2ScanPageBo scanPageBo);
 
-    @GetMapping("/sample2ScanRpc/listByParams")
+    @GetMapping("/sample2ScanRpc/listByParams") //@RequestParam标记的参数在Get请求中的参数转化 @see ReflectiveFeign.create(Object[] argv)
     BasicJsonResult<PageJsonResultVo<Sample2ScanBo>> rpcListByParams(@RequestParam("id") Long id, @RequestParam("scanType") ScanTypeEnum scanType, @RequestParam("scanTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime scanTime, @RequestParam("page") Long page, @RequestParam("pageSize") Long pageSize);
 
     @PostMapping("/sample2ScanRpc/save")
