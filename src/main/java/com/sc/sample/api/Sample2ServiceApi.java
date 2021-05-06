@@ -30,7 +30,7 @@ public interface Sample2ServiceApi {
     @GetMapping("/sample2ScanRpc/getByIds")
     BasicJsonResult<List<Sample2ScanBo>> rpcGetByIds(@RequestParam(name = "ids", required = false) List<Long> ids);
 
-    @GetMapping("/sample2ScanRpc/listByPojo") //pojo参数在Get请求中的参数转化 @see ReflectiveFeign.create(Object[] argv), 支持度不高
+    @GetMapping("/sample2ScanRpc/listByPojo") //pojo参数在Get请求中的参数转化 @see ReflectiveFeign.create(Object[] argv), 支持度不高(declaredField, toString)
     BasicJsonResult<PageJsonResultVo<Sample2ScanBo>> rpcListByPojo(@SpringQueryMap Sample2ScanPageBo scanPageBo);
 
     @GetMapping("/sample2ScanRpc/listByPojo2")//默认Feign not support Get RequestBody
