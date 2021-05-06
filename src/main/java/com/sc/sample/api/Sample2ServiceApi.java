@@ -42,4 +42,5 @@ public interface Sample2ServiceApi {
     @PostMapping("/sample2ScanRpc/save")
     JsonResult rpcSave(@RequestBody Sample2ScanAddBo scanAddBo);
 
+    //TODO hystrix配置特别是线程池配置使并发容量满足要求，feign配置，ribbon配置
 }
