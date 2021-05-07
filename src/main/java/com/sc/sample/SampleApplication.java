@@ -8,6 +8,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.retry.annotation.EnableRetry;
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableCircuitBreaker
 @EnableHystrixDashboard
 @EnableFeignClients
+@EnableRetry
 public class SampleApplication {
 
     public static void main(String argv[]) {
