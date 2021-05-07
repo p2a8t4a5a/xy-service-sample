@@ -1,4 +1,4 @@
-package com.sc.sample.hystrix.hystrix.controller;
+package com.sc.sample.hystrix.controller;
 
 import com.sc.common.vo.JsonResult;
 import com.sc.sample.hystrix.FlHystrixCommandSample;
