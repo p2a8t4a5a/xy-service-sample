@@ -9,6 +9,9 @@ import com.sc.sample.dto.scan.SampleScanUpdateDto;
 import com.sc.sample.retry.FlRetrySample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.backoff.UniformRandomBackOffPolicy;
@@ -92,7 +95,12 @@ public class RetryController {
 
     @GetMapping("retryForRestTemplate")
     public JsonResult retryForRestTemplate(Long id) {
-        BasicJsonResult result = restTemplate.getForObject("http://service-sample2/sample2ScanRpc/getById?id=" + id, BasicJsonResult.class);
+        /*BasicJsonResult result = restTemplate.getForObject("http://service-sample2/sample2ScanRpc/getById?id=" + id,
+                BasicJsonResult.class);*/
+
+        BasicJsonResult<Sample2ScanBo> result = restTemplate.exchange("http://service-sample2/sample2ScanRpc/getById?id=" + id,
+                HttpMethod.GET, null, new ParameterizedTypeReference<BasicJsonResult<Sample2ScanBo>>() {
+                }).getBody();
 
         return result;
     }
