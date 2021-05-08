@@ -19,7 +19,7 @@
         </filter>
         <encoder>
             <pattern>
-                [%d{yyyy-MM-dd HH:mm:ss}] %-4relative [%thread] %-5level %logger{35}.%M\(%L\) - %msg%n
+                [%d{yyyy-MM-dd HH:mm:ss.SSS}] %-4relative [%yellow(%thread)] %highlight(%-5level) [<!--%X{${springApplicationName}},-->%yellow(%X{X-B3-TraceId}),%green(%X{X-B3-SpanId}),%blue(%X{X-B3-ParentSpanId})] %green(%logger{35}.%M\(%L\)) - %msg%n
             </pattern>
         </encoder>
         <!--滚动策略-->
@@ -34,7 +34,7 @@
         </filter>
         <encoder>
             <pattern>
-                [%d{yyyy-MM-dd HH:mm:ss}] %-4relative [%thread] %-5level %logger{35}.%M\(%L\) - %msg%n
+                [%d{yyyy-MM-dd HH:mm:ss.SSS}] %-4relative [%yellow(%thread)] %highlight(%-5level) [<!--%X{${springApplicationName}},-->%yellow(%X{X-B3-TraceId}),%green(%X{X-B3-SpanId}),%blue(%X{X-B3-ParentSpanId})] %green(%logger{35}.%M\(%L\)) - %msg%n
             </pattern>
         </encoder>
         <!--滚动策略-->
