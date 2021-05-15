@@ -1,8 +1,8 @@
 package com.sc.sample.api;
 
-import com.sc.common.bo.Sample2ScanAddBo;
-import com.sc.common.bo.Sample2ScanBo;
-import com.sc.common.bo.Sample2ScanPageBo;
+import com.sc.common.bo.scan.Sample2ScanAddBo;
+import com.sc.common.bo.scan.Sample2ScanBo;
+import com.sc.common.bo.scan.Sample2ScanPageBo;
 import com.sc.common.enums.ScanTypeEnum;
 import com.sc.common.vo.BasicJsonResult;
 import com.sc.common.vo.JsonResult;

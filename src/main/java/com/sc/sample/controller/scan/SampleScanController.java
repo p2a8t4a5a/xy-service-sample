@@ -2,7 +2,7 @@ package com.sc.sample.controller.scan;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.sc.common.bo.Sample2ScanPageBo;
+import com.sc.common.bo.scan.Sample2ScanPageBo;
 import com.sc.common.dto.PageDto;
 import com.sc.common.enums.JsonResultEnum;
 import com.sc.common.enums.ScanTypeEnum;

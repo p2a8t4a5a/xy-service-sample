@@ -1,6 +1,6 @@
 package com.sc.sample.retry.controller;
 
-import com.sc.common.bo.Sample2ScanBo;
+import com.sc.common.bo.scan.Sample2ScanBo;
 import com.sc.common.exception.BizException;
 import com.sc.common.vo.BasicJsonResult;
 import com.sc.common.vo.JsonResult;
@@ -11,12 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.retry.RetryContext;
-import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.backoff.UniformRandomBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.policy.TimeoutRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
