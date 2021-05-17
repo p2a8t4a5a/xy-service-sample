@@ -1,4 +1,4 @@
-package com.sc.sample.dto.redistest;
+package com.sc.sample.redis.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

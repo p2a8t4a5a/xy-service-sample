@@ -1,8 +1,5 @@
-package com.sc.sample.enums;
+package com.sc.sample.redis.enums;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Arrays;
 
 public enum PojoEnum {
     SYSTEM("SYSTEM", "系统");
@@ -24,9 +21,5 @@ public enum PojoEnum {
         return text;
     }
 
-    @JsonCreator
-    public static PojoEnum getByValue(String value) {
-        return Arrays.stream(PojoEnum.values()).filter(scan -> scan.getValue().equals(value)).findFirst().orElse(null);
-    }
 
 }

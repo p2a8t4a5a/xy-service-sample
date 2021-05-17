@@ -1,19 +1,21 @@
-package com.sc.sample.enums;
+package com.sc.sample.redis.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Arrays;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum PojoAnoEnum {
+public enum PojoDtoEnum {
     SYSTEM("SYSTEM", "系统");
 
+    @EnumValue
     private String value;
 
     private String text;
 
-    PojoAnoEnum(String value, String text) {
+    PojoDtoEnum(String value, String text) {
         this.value = value;
         this.text = text;
     }
@@ -27,8 +29,8 @@ public enum PojoAnoEnum {
     }
 
     @JsonCreator
-    public static PojoAnoEnum getByValue(String value) {
-        return Arrays.stream(PojoAnoEnum.values()).filter(scan -> scan.getValue().equals(value)).findFirst().orElse(null);
+    public static PojoDtoEnum getByValue(String value) {
+        return Arrays.stream(PojoDtoEnum.values()).filter(scan -> scan.getValue().equals(value)).findFirst().orElse(null);
     }
 
 }
