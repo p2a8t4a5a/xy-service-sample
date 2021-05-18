@@ -25,7 +25,7 @@ public class FlRedisSample {
      *         redis:
      *           ##密码
      *           password:
-     *           #连接超时时间（毫秒）
+     *           #commandTimeout（毫秒）
      *           timeout: 3000
      *           #redis cluster模式设置为0
      *           database: 0
@@ -78,6 +78,8 @@ public class FlRedisSample {
      *        RedisTemplate中使用序列化器，json格式通常使用Jackson2JsonRedisSerializer: {@link com.sc.sample.config.RedisConfig}
      *        ClusterOperations,ValueOperations,HashOperations,ZSetOperations,ListOperations,SetOperations...
      *
+     *        set操作没有返回值，判断是否写成功，即不断地读(如TCC中，try阶段set,confirm阶段get,cancel阶段del),get,del有返回值
+     *        set/get/del命令超时通过如上commandTimeout配置
      *
      * TODO 配置从slave读 redis cluster模式下配置slave读??? LettuceClientConfiguration.readFrom(REPLICA_PREFERRED)
      *
