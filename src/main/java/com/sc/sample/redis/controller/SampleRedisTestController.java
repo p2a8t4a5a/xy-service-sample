@@ -1,5 +1,6 @@
 package com.sc.sample.redis.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.sc.common.vo.JsonResult;
 import com.sc.sample.redis.FlCustomSerializer;
 import com.sc.sample.redis.dto.*;
@@ -12,6 +13,7 @@ import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -124,6 +126,14 @@ public class SampleRedisTestController {
         LocalDateTime localDateTimeVal = flCustomSerializer.deserialize(localDateTimeString, LocalDateTime.class);//反序列为LocalDateTime
 
 
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("q中");
+        customRedisTemplate.opsForValue().set("List", flCustomSerializer.serialize(list));//序列化为 "["java.util.ArrayList",["1","q中"]]", redis保存为 "List"->"[\"java.util.ArrayList\",[\"1\",\"q\xe4\xb8\xad\"]]"
+        String listString = customRedisTemplate.opsForValue().get("List");//从redis取出, 保存为 "["java.util.ArrayList",["1","q中"]]"
+        List<String> listVal = flCustomSerializer.deserialize(listString, new TypeReference<List<String>>(){}); //反序列化为List<String>
+
+
         //对每一个list-value序列化，对Long序列化成 "4123123122", 对String序列化成 "\"中\"", 对BigDecimal序列化成 "[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]"
         //                                  对Enum的String序列化成 "\"SYSTEM\"", 对LocalDateTime序列化成 "\"2021-05-16 14:03:19\""
         //redis中保存为
@@ -223,7 +233,7 @@ public class SampleRedisTestController {
     public JsonResult setObject() {
 
         Object somethingNull = null;
-        redisTemplate.opsForValue().set("Null", somethingNull);//ObjectMapper将此Boolean序列化成byte[0], redis中保存为 "Null"->""
+        redisTemplate.opsForValue().set("Null", somethingNull);//ObjectMapper将此Boolean序列化成 byte[0], redis中保存为 "Null"->""
         Object nullObject = redisTemplate.opsForValue().get("Null");//从redis取出 ""的byte[] 反序列化，实际为null
 
         redisTemplate.opsForValue().set("Boolean", true);//ObjectMapper将此Boolean序列化成 "true"的byte[], redis中保存为 "Boolean"->"true"
@@ -251,10 +261,10 @@ public class SampleRedisTestController {
         Object stringObject = redisTemplate.opsForValue().get("String");//从redis取出 "\"中dd\""的byte[] 反序列化，实际类型是 String: "中dd"
 
 
-        redisTemplate.opsForValue().set("Float", 1.32323232323232323232323232323254345656364564564564545f);//ObjectMapper将此Float序列化成 "1.3232323"的byte[], redis中保存为 "Float"->"1.3232323" 精度丢失
+        redisTemplate.opsForValue().set("Float", 1.32323232323232323232323232323254345656364564564564545f);//ObjectMapper将此Float序列化成 "1.3232323" 的byte[], redis中保存为 "Float"->"1.3232323" 精度丢失
         redisTemplate.opsForValue().set("Double", 2.332131231212445645674765756877867897853764645645645656546546456);//ObjectMapper将此Double序列化成 "2.3321312312124456"的byte[], redis中保存为 "Double"->"2.3321312312124456" 精度丢失
         Object floatObject = redisTemplate.opsForValue().get("Float");//从redis取出 "1.3232323"的byte[] 反序列化，实际类型是 Double
-        Object doubleObject = redisTemplate.opsForValue().get("Double");//从redis取出 "2.3321312312124456"的byte[] 反序列化，实际类型是 Double
+        Object doubleObject = redisTemplate.opsForValue().get("Double");//从redis取出 "2.3321312312124456" 的byte[] 反序列化，实际类型是 Double
 
 
         BigInteger bi = new BigInteger("771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121");
@@ -266,11 +276,18 @@ public class SampleRedisTestController {
         Object bigDecimalObject = redisTemplate.opsForValue().get("BigDecimal");//从redis取出反序列化，实际类型是 BigDecimal
 
 
-        redisTemplate.opsForValue().set("Enum", PojoDtoEnum.SYSTEM.getValue());//Enum的value字段(String类型)序列化为 "\"SYSTEM\""的byte[], redis保存为 "Enum"->"\"SYSTEM\""
+        redisTemplate.opsForValue().set("Enum", PojoDtoEnum.SYSTEM.getValue());//Enum的value字段(String类型)序列化为 "\"SYSTEM\"" 的byte[], redis保存为 "Enum"->"\"SYSTEM\""
         Object enumStringObject = redisTemplate.opsForValue().get("Enum");//从redis取出反序列化，实际类型是 String: "SYSTEM"
 
-        redisTemplate.opsForValue().set("LocalDateTime", LocalDateTime.now());//ObjectMapper将此LocalDateTime序列化成 "\"2021-05-17 18:03:44\""的byte[], redis保存为 "LocalDateTime"->"\"2021-05-17 18:03:44\""
+        redisTemplate.opsForValue().set("LocalDateTime", LocalDateTime.now());//ObjectMapper将此LocalDateTime序列化成 "\"2021-05-17 18:03:44\"" 的byte[], redis保存为 "LocalDateTime"->"\"2021-05-17 18:03:44\""
         Object localDateTimeObject = redisTemplate.opsForValue().get("LocalDateTime");//从redis取出 "\"2021-05-17 18:03:44\""的byte[] 反序列化，实际类型是 String: "2021-05-17 18:03:44"
+
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("q中");
+        redisTemplate.opsForValue().set("List", list);//ObjectMapper将此List序列化成 "["java.util.ArrayList",["1","q中"]]" 的byte[], redis保存为 "List"->"[\"java.util.ArrayList\",[\"1\",\"q\xe4\xb8\xad\"]]"
+        Object listObject = redisTemplate.opsForValue().get("List");//从redis取出, 反序列化，实际类型是 ArrayList
+        List<String> listGenericObject = (List<String>) listObject;//强转成List<String>
 
 
         //ObjectMapper对每一个list-value序列化，对Long序列化成 "4123123122"的byte[], 对String序列化成 "\"中\""的byte[], 对BigDecimal序列化成 "[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]"的byte[],
@@ -421,6 +438,14 @@ public class SampleRedisTestController {
         genericRedisTemplate.opsForValue().set("LocalDateTime", flCustomSerializer.serializeAsBytes(LocalDateTime.now()));//序列化为 byte[], redis保存为 "LocalDateTime"->"\"2021-05-16 22:05:41\""
         byte[] localDateTimeBytes = genericRedisTemplate.opsForValue().get("LocalDateTime");//从redis取出，保存为 byte[]
         LocalDateTime localDateTimeVal = flCustomSerializer.deserialize(localDateTimeBytes, LocalDateTime.class);//反序列为LocalDateTime
+
+
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("q中");
+        genericRedisTemplate.opsForValue().set("List", flCustomSerializer.serializeAsBytes(list));//序列化为 byte[], redis保存为 "List"->"[\"java.util.ArrayList\",[\"1\",\"q\xe4\xb8\xad\"]]"
+        byte[] listBytes = genericRedisTemplate.opsForValue().get("List");//从redis取出, 保存为 byte[]
+        List<String> listVal = flCustomSerializer.deserialize(listBytes, new TypeReference<List<String>>(){}); //反序列化为List<String>
 
 
         //对每一个list-value序列化为 byte[]

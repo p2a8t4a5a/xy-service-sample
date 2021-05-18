@@ -2,25 +2,18 @@ package com.sc.sample.serialize;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.sc.common.utils.JacksonUtils;
 import com.sc.sample.redis.enums.PojoAnoEnum;
 import com.sc.sample.redis.enums.PojoEnum;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class FlSerializeTest {
 
@@ -205,8 +198,25 @@ public class FlSerializeTest {
         PojoAnoEnum pojoAnoEnumVal = om.readValue(pojoAnoEnumSe, PojoAnoEnum.class);
 
 
-        Date dt = new Date(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("q中");
+        /**
+         * IndexedListSerializer,StringSerializer序列化器
+         * "["1","q中"]"
+         */
+        String listSe = om.writeValueAsString(list);
+        //UntypedObjectDeserializer, ArrayList<Object>
+        Object listObj = om.readValue(listSe, Object.class);
+        //CollectionDeserializer,UnTypedObjectDeserializer(List中元素)序列化器， ArrayList<Object>
+        List listVal = om.readValue(listSe, List.class);
+        /**
+         * 泛型类型，StringCollectionDeserializer, ArrayList<String>
+         */
+        List<String> listGenericVal = om.readValue(listSe, new TypeReference<List<String>>(){});
 
+
+        Date dt = new Date(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
         //Date未使用@JsonFormat,Enum未使用@JsonFormat,@JsonCreator
         Pojo pojo = Pojo.builder()
                 .id(1L)              //NumberSerializers$LongSerializer序列化器     NumberDeserializers$LongDeserializer反序列化器
@@ -464,9 +474,25 @@ public class FlSerializeTest {
         PojoAnoEnum pojoAnoEnumVal = om.readValue(pojoAnoEnumSe, PojoAnoEnum.class);
 
 
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("q中");
+        /**
+         * TypeWrappedSerializer,IndexedListSerializer,StringSerializer
+         * "["java.util.ArrayList",["1","q中"]]"
+         */
+        String listSe = om.writeValueAsString(list);
+        //... ArrayList<Object>
+        Object listObj = om.readValue(listSe, Object.class);
+        //... ArrayList<Object>
+        List listVal = om.readValue(listSe, List.class);
+        /**
+         * 泛型类型..., ArrayList<String>
+         */
+        List<String> listGenericVal = om.readValue(listSe, new TypeReference<List<String>>(){});
+
 
         Date dt = new Date(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
-
         //Date未使用@JsonFormat,Enum未使用@JsonFormat,@JsonCreator
         Pojo pojo = Pojo.builder()
                 .id(1L)              //NumberSerializers$LongSerializer序列化器     NumberDeserializers$LongDeserializer反序列化器

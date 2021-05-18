@@ -2,10 +2,10 @@ package com.sc.sample.redis;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sc.common.exception.BizException;
 import com.sc.common.utils.JacksonUtils;
-import jdk.internal.org.objectweb.asm.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -54,13 +54,13 @@ public class FlCustomSerializer {
         }
     }
 
-    /*public <T> T deserialize(String value, TypeReference type) {
+    public <T> T deserialize(String value, TypeReference type) {
         try {
             return this.objectMapper.readValue(value, type);
         } catch (Exception ex) {
             throw new BizException(() -> "Could not read JSON: " + ex.getMessage());
         }
-    }*/
+    }
 
     public Object deserialize(byte[] bytes) {
         if(bytes == null || bytes.length == 0) {
@@ -79,6 +79,17 @@ public class FlCustomSerializer {
         }
         try {
             return this.objectMapper.readValue(bytes, 0, bytes.length, clz);
+        } catch (Exception ex) {
+            throw new BizException(() -> "Could not read JSON: " + ex.getMessage());
+        }
+    }
+
+    public <T> T deserialize(byte[] bytes, TypeReference type) {
+        if(bytes == null || bytes.length == 0) {
+            return null;
+        }
+        try {
+            return this.objectMapper.readValue(bytes, 0, bytes.length, type);
         } catch (Exception ex) {
             throw new BizException(() -> "Could not read JSON: " + ex.getMessage());
         }
