@@ -1,19 +1,19 @@
 package com.sc.sample.serialize;
 
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sc.common.utils.JacksonUtils;
+import com.sc.common.utils.ReflectUtils;
 import com.sc.sample.redis.enums.PojoAnoEnum;
 import com.sc.sample.redis.enums.PojoEnum;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class FlSerializeTest {
 
@@ -265,6 +265,8 @@ public class FlSerializeTest {
          * PojoAno(bl=false, id=1, name=someiii阿迪斯, pojoAnoEnum=SYSTEM, pojoAnoEnumValue=null, pojoTime=2021-05-17T01:06:56, bi=771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121, bd=8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423, dt=Mon May 17 01:06:56 CST 2021)
          */
         PojoAno pojoAnoVal = om.readValue(pojoAnoSe, PojoAno.class);
+
+        Map<String, Object> pojoMap = ReflectUtils.bean2Map(pojoAnoVal);
 
 
         System.out.println("basic");

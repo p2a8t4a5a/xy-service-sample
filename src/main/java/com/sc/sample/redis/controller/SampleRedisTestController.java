@@ -1,6 +1,8 @@
 package com.sc.sample.redis.controller;
 
+
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.sc.common.utils.ReflectUtils;
 import com.sc.common.vo.JsonResult;
 import com.sc.sample.redis.FlCustomSerializer;
 import com.sc.sample.redis.dto.*;
@@ -9,12 +11,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import javax.swing.text.html.parser.Entity;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -343,9 +349,27 @@ public class SampleRedisTestController {
         //redis中保存为
         //"[\"com.sc.sample.redis.dto.Pojo2RedisDto\",{\"id\":1234534535354,\"bl\":false,\"s\":null,\"name\":\"just pojo\xe5\x93\x92\xe5\x93\x92\xe5\x93\x92\",\"bi\":[\"java.math.BigInteger\",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121],\"bd\":[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423],\"pojoType\":\"SYSTEM\",\"pojoTime\":\"2021-05-17 18:06:34\"}]"
         redisTemplate.opsForValue().set("Pojo", pojo2RedisDto);
-        Object result = redisTemplate.opsForValue().get("Pojo");
+        Object result = redisTemplate.opsForValue().get("Pojo");//result为Pojo2RedisDto类型
         Pojo2RedisDto resultToUse = (Pojo2RedisDto) result;
 
+        //the other 将bean写成redis 的 hash
+        //1.将bean转化为Map<String, Object>
+        Map<String, Object> pojoMap = ReflectUtils.bean2Map(resultToUse);
+        //2.将Map<String, Object>写入redis hash, Map中每一个value都使用ObjectMapper序列化
+        //127.0.0.1:6380> hgetall PojoHash
+        // "pojoType"->"\"SYSTEM\""
+        // "id"->"1234534535354"
+        // "s"->""
+        // "bi"->"[\"java.math.BigInteger\",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121]"
+        // "bl"->"false"
+        // "name"->"\"just pojo\xe5\x93\x92\xe5\x93\x92\xe5\x93\x92\""
+        // "pojoTime"->"\"2021-05-18 17:27:42\""
+        // "bd"->"[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]"
+        redisTemplate.opsForHash().putAll("PojoHash", pojoMap);
+        //3.从redis取得Map，Map中每一个value都使用ObjectMapper反序列化
+        Map<Object, Object> hashVal = redisTemplate.opsForHash().entries("PojoHash");
+        //4.将Map转化为bean, TODO Map2Bean error: map中pojoTime是String，无法直接设置成bean的LocalDateTime对象, Pojo(有类型)-->Map(有类型)-->序列化保存到redis(有些字段类型丢失，如序列化成了String)-->从redis取出保存为Map(有些字段类型丢失)-->Pojo(报错: 有些字段类型不对)
+        //Pojo2RedisDto bean = ReflectUtils.map2Bean(hashVal, Pojo2RedisDto.class);
 
         return JsonResult.buildSuccessResult(resultToUse);
     }

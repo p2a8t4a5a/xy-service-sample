@@ -6,9 +6,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sc.common.exception.BizException;
 import com.sc.common.utils.JacksonUtils;
+import com.sc.common.utils.ReflectUtils;
 import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Slf4j
@@ -116,5 +119,6 @@ public class FlCustomSerializer {
             throw new BizException(() -> "Could not write JSON: " + ex.getMessage());
         }
     }
+
 
 }
