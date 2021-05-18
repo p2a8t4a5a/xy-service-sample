@@ -5,7 +5,7 @@ package com.sc.sample.redis;
  * redis sample
  * redis cluster; spring data redis; Lettuce; Redisson
  * Lettuce: 基于netty，nio/io多路复用; share connection and thread-safe; reactive
- * Redission: 基于netty，nio/io多路复用; share connection and thread-safe; reactive; more advanced features
+ * Redisson: 基于netty，nio/io多路复用; share connection and thread-safe; reactive; more advanced features
  */
 public class FlRedisSample {
 
