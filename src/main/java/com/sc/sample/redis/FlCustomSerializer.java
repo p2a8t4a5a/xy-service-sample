@@ -15,7 +15,9 @@ import java.nio.charset.StandardCharsets;
 public class FlCustomSerializer {
 
     private ObjectMapper objectMapper = new ObjectMapper();
-    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    private static final byte[] EMPTY_ARRAY = new byte[0];
+    private static final String EMPTY_STRING = "";
 
     public FlCustomSerializer() {
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
@@ -31,6 +33,9 @@ public class FlCustomSerializer {
     }
 
     public Object deserialize(String value) {
+        if(value == null || value.length() == 0) {
+            return null;
+        }
         try {
             return this.objectMapper.readValue(value, Object.class);
         } catch (Exception ex) {
@@ -39,6 +44,9 @@ public class FlCustomSerializer {
     }
 
     public <T> T deserialize(String value, Class<T> clz) {
+        if(value == null || value.length() == 0) {
+            return null;
+        }
         try {
             return this.objectMapper.readValue(value, clz);
         } catch (Exception ex) {
@@ -54,7 +62,21 @@ public class FlCustomSerializer {
         }
     }*/
 
+    public Object deserialize(byte[] bytes) {
+        if(bytes == null || bytes.length == 0) {
+            return null;
+        }
+        try {
+            return this.objectMapper.readValue(bytes, 0, bytes.length, Object.class);
+        } catch (Exception ex) {
+            throw new BizException(() -> "Could not read JSON: " + ex.getMessage());
+        }
+    }
+
     public <T> T deserialize(byte[] bytes, Class<T> clz) {
+        if(bytes == null || bytes.length == 0) {
+            return null;
+        }
         try {
             return this.objectMapper.readValue(bytes, 0, bytes.length, clz);
         } catch (Exception ex) {
@@ -63,6 +85,9 @@ public class FlCustomSerializer {
     }
 
     public String serialize(Object value) {
+        if(value == null) {
+            return EMPTY_STRING;
+        }
         try {
             return this.objectMapper.writeValueAsString(value);
         } catch (Exception ex) {
@@ -71,6 +96,9 @@ public class FlCustomSerializer {
     }
 
     public byte[] serializeAsBytes(Object value) {
+        if(value == null) {
+            return EMPTY_ARRAY;
+        }
         try {
             return this.objectMapper.writeValueAsBytes(value);
         } catch (Exception ex) {

@@ -4,20 +4,15 @@ import com.sc.common.vo.JsonResult;
 import com.sc.sample.redis.FlCustomSerializer;
 import com.sc.sample.redis.dto.*;
 import com.sc.sample.redis.enums.PojoDtoEnum;
-import com.sc.sample.vo.scan.SampleScanVo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -55,6 +50,13 @@ public class SampleRedisTestController {
      */
     @PostMapping("setString")
     public JsonResult setString() {
+
+        Integer somethingNull = null;
+        customRedisTemplate.opsForValue().set("Null", flCustomSerializer.serialize(somethingNull));//序列化为 "", redis中保存为 "Null"->""
+        String nullString = customRedisTemplate.opsForValue().get("Null");//从redis取出，保存为 ""
+        Object nullVal = flCustomSerializer.deserialize(nullString);//反序列化为 null
+        Integer nullVal2 = flCustomSerializer.deserialize(nullString, Integer.class);//反序列化为 null
+
 
         customRedisTemplate.opsForValue().set("Boolean", flCustomSerializer.serialize(true));//序列化为 "true", redis中保存为 "Boolean"->"true"
         String booleanString = customRedisTemplate.opsForValue().get("Boolean");   //从redis取出，保存为 "true"
@@ -220,55 +222,59 @@ public class SampleRedisTestController {
     @PostMapping("setObject")
     public JsonResult setObject() {
 
-        redisTemplate.opsForValue().set("Boolean", true);//ObjectMapper将此Boolean序列化成 "true", redis中保存为 "Boolean"->"true"
-        Object booleanObject = redisTemplate.opsForValue().get("Boolean");//从redis取出 "true" 反序列化，实际类型是 Boolean:true
+        Object somethingNull = null;
+        redisTemplate.opsForValue().set("Null", somethingNull);//ObjectMapper将此Boolean序列化成byte[0], redis中保存为 "Null"->""
+        Object nullObject = redisTemplate.opsForValue().get("Null");//从redis取出 ""的byte[] 反序列化，实际为null
+
+        redisTemplate.opsForValue().set("Boolean", true);//ObjectMapper将此Boolean序列化成 "true"的byte[], redis中保存为 "Boolean"->"true"
+        Object booleanObject = redisTemplate.opsForValue().get("Boolean");//从redis取出 "true"的byte[] 反序列化，实际类型是 Boolean:true
 
 
-        redisTemplate.opsForValue().set("Character", 'a');//ObjectMapper将此Char序列化成 "\"a\"", redis中保存为 "Character"->"\"a\""
-        Object charObject = redisTemplate.opsForValue().get("Character");//从redis取出 "\"a\"" 反序列化，实际类型是 String:"a"
+        redisTemplate.opsForValue().set("Character", 'a');//ObjectMapper将此Char序列化成 "\"a\""的byte[], redis中保存为 "Character"->"\"a\""
+        Object charObject = redisTemplate.opsForValue().get("Character");//从redis取出 "\"a\""的byte[] 反序列化，实际类型是 String:"a"
 
 
-        redisTemplate.opsForValue().set("Byte", (byte) 1);//ObjectMapper将此Byte序列化成 "1", redis中保存为 "Byte"->"1"
-        Object byteObject = redisTemplate.opsForValue().get("Byte");//从redis取出 "1" 反序列化，实际类型是 Integer:1
+        redisTemplate.opsForValue().set("Byte", (byte) 1);//ObjectMapper将此Byte序列化成 "1"的byte[], redis中保存为 "Byte"->"1"
+        Object byteObject = redisTemplate.opsForValue().get("Byte");//从redis取出 "1"的byte[] 反序列化，实际类型是 Integer:1
 
-        redisTemplate.opsForValue().set("Short", (short) 2);//ObjectMapper将此Short序列化成 "2", redis中保存为 "Short"->"2"
-        Object shortObject = redisTemplate.opsForValue().get("Short");//从redis取出 "2" 反序列化，实际类型是 Integer: 2
+        redisTemplate.opsForValue().set("Short", (short) 2);//ObjectMapper将此Short序列化成 "2"的byte[], redis中保存为 "Short"->"2"
+        Object shortObject = redisTemplate.opsForValue().get("Short");//从redis取出 "2"的byte[] 反序列化，实际类型是 Integer: 2
 
-        redisTemplate.opsForValue().set("Integer", 3);//ObjectMapper将此Integer序列化成 "3", redis中保存为 "Integer"->"3"
-        Object integerObject = redisTemplate.opsForValue().get("Integer");//从redis取出 "3" 反序列化，实际类型是 Integer:3
+        redisTemplate.opsForValue().set("Integer", 3);//ObjectMapper将此Integer序列化成 "3"的byte[], redis中保存为 "Integer"->"3"
+        Object integerObject = redisTemplate.opsForValue().get("Integer");//从redis取出 "3"的byte[] 反序列化，实际类型是 Integer:3
 
-        redisTemplate.opsForValue().set("Long", 1234567890987666L);//ObjectMapper将此Long序列化成 "1234567890987666", redis中保存为 "Long"->"1234567890987666"
-        Object longObject = redisTemplate.opsForValue().get("Long");//从redis取出 "1234567890987666" 反序列化，实际类型是 Long:1234567890987666L
-
-
-        redisTemplate.opsForValue().set("String", "中dd");//ObjectMapper将此String序列化成 "\"中dd\"", redis中保存为 "String"->"\"\xe4\xb8\xaddd\""
-        Object stringObject = redisTemplate.opsForValue().get("String");//从redis取出 "\"中dd\"" 反序列化，实际类型是 String: "中dd"
+        redisTemplate.opsForValue().set("Long", 1234567890987666L);//ObjectMapper将此Long序列化成 "1234567890987666"的byte[], redis中保存为 "Long"->"1234567890987666"
+        Object longObject = redisTemplate.opsForValue().get("Long");//从redis取出 "1234567890987666"的byte[] 反序列化，实际类型是 Long:1234567890987666L
 
 
-        redisTemplate.opsForValue().set("Float", 1.32323232323232323232323232323254345656364564564564545f);//ObjectMapper将此Float序列化成 "1.3232323", redis中保存为 "Float"->"1.3232323" 精度丢失
-        redisTemplate.opsForValue().set("Double", 2.332131231212445645674765756877867897853764645645645656546546456);//ObjectMapper将此Double序列化成 "2.3321312312124456", redis中保存为 "Double"->"2.3321312312124456" 精度丢失
-        Object floatObject = redisTemplate.opsForValue().get("Float");//从redis取出 "1.3232323" 反序列化，实际类型是 Double
-        Object doubleObject = redisTemplate.opsForValue().get("Double");//从redis取出 "2.3321312312124456" 反序列化，实际类型是 Double
+        redisTemplate.opsForValue().set("String", "中dd");//ObjectMapper将此String序列化成 "\"中dd\""的byte[], redis中保存为 "String"->"\"\xe4\xb8\xaddd\""
+        Object stringObject = redisTemplate.opsForValue().get("String");//从redis取出 "\"中dd\""的byte[] 反序列化，实际类型是 String: "中dd"
+
+
+        redisTemplate.opsForValue().set("Float", 1.32323232323232323232323232323254345656364564564564545f);//ObjectMapper将此Float序列化成 "1.3232323"的byte[], redis中保存为 "Float"->"1.3232323" 精度丢失
+        redisTemplate.opsForValue().set("Double", 2.332131231212445645674765756877867897853764645645645656546546456);//ObjectMapper将此Double序列化成 "2.3321312312124456"的byte[], redis中保存为 "Double"->"2.3321312312124456" 精度丢失
+        Object floatObject = redisTemplate.opsForValue().get("Float");//从redis取出 "1.3232323"的byte[] 反序列化，实际类型是 Double
+        Object doubleObject = redisTemplate.opsForValue().get("Double");//从redis取出 "2.3321312312124456"的byte[] 反序列化，实际类型是 Double
 
 
         BigInteger bi = new BigInteger("771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121");
         BigDecimal bd = new BigDecimal("8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423");
 
-        redisTemplate.opsForValue().set("BigInteger", bi);//ObjectMapper将此BigInteger序列化成 "[\"java.math.BigInteger\",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121]";
-        redisTemplate.opsForValue().set("BigDecimal", bd);//ObjectMapper将此BigDecimal序列化成 "[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]";
+        redisTemplate.opsForValue().set("BigInteger", bi);//ObjectMapper将此BigInteger序列化成 "[\"java.math.BigInteger\",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121]"的byte[]
+        redisTemplate.opsForValue().set("BigDecimal", bd);//ObjectMapper将此BigDecimal序列化成 "[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]"的byte[]
         Object bigIntegerObject = redisTemplate.opsForValue().get("BigInteger");//从redis取出反序列化，实际类型是 BigInteger
         Object bigDecimalObject = redisTemplate.opsForValue().get("BigDecimal");//从redis取出反序列化，实际类型是 BigDecimal
 
 
-        redisTemplate.opsForValue().set("Enum", PojoDtoEnum.SYSTEM.getValue());//Enum的value字段(String类型)序列化为 "\"SYSTEM\"", redis保存为 "Enum"->"\"SYSTEM\""
+        redisTemplate.opsForValue().set("Enum", PojoDtoEnum.SYSTEM.getValue());//Enum的value字段(String类型)序列化为 "\"SYSTEM\""的byte[], redis保存为 "Enum"->"\"SYSTEM\""
         Object enumStringObject = redisTemplate.opsForValue().get("Enum");//从redis取出反序列化，实际类型是 String: "SYSTEM"
 
-        redisTemplate.opsForValue().set("LocalDateTime", LocalDateTime.now());//ObjectMapper将此LocalDateTime序列化成 "\"2021-05-17 18:03:44\"", redis保存为 "LocalDateTime"->"\"2021-05-17 18:03:44\""
-        Object localDateTimeObject = redisTemplate.opsForValue().get("LocalDateTime");//从redis取出 "\"2021-05-17 18:03:44\"" 反序列化，实际类型是 String: "2021-05-17 18:03:44"
+        redisTemplate.opsForValue().set("LocalDateTime", LocalDateTime.now());//ObjectMapper将此LocalDateTime序列化成 "\"2021-05-17 18:03:44\""的byte[], redis保存为 "LocalDateTime"->"\"2021-05-17 18:03:44\""
+        Object localDateTimeObject = redisTemplate.opsForValue().get("LocalDateTime");//从redis取出 "\"2021-05-17 18:03:44\""的byte[] 反序列化，实际类型是 String: "2021-05-17 18:03:44"
 
 
-        //ObjectMapper对每一个list-value序列化，对Long序列化成 "4123123122", 对String序列化成 "\"中\"", 对BigDecimal序列化成 "[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]"
-        //                                  对Enum的String序列化成 "\"SYSTEM\"", 对LocalDateTime序列化成 "\"2021-05-16 14:03:19\""
+        //ObjectMapper对每一个list-value序列化，对Long序列化成 "4123123122"的byte[], 对String序列化成 "\"中\""的byte[], 对BigDecimal序列化成 "[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]"的byte[],
+        //                                  对Enum的String序列化成 "\"SYSTEM\""的byte[], 对LocalDateTime序列化成 "\"2021-05-16 14:03:19\""的byte[]
         //redis中保存为
         //      127.0.0.1:6379> lrange list-value 0 5
         //      1) "\"2021-05-16 14:03:19\""
@@ -283,8 +289,8 @@ public class SampleRedisTestController {
         List<Object> listValues = redisTemplate.opsForList().range("list-value", 0, length);
 
 
-        //ObjectMapped对每一个hash-value序列化，对Enum的String序列化成 "\"SYSTEM\"", 对LocalDateTime序列化成 "\"2021-05-16 17:02:34\"", 对BigDecimal序列化成 "[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]",
-        //                                  对String序列化成 "\"中\"", 对Long序列化成 "124234252453453"
+        //ObjectMapped对每一个hash-value序列化，对Enum的String序列化成 "\"SYSTEM\""的byte[], 对LocalDateTime序列化成 "\"2021-05-16 17:02:34\""的byte[], 对BigDecimal序列化成 "[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]"的byte[],
+        //                                  对String序列化成 "\"中\""的byte[], 对Long序列化成 "124234252453453"的byte[]
         //redis中保存为
         //      127.0.0.1:6381> hgetall hash-value
         //       "key5"->"124234252453453",
@@ -316,7 +322,7 @@ public class SampleRedisTestController {
                 .pojoTime(LocalDateTime.now())
                 .build();
         //ObjectMapper将此Pojo对象序列化成
-        //"["com.sc.sample.redis.dto.Pojo2RedisDto",{"id":1234534535354,"bl":false,"s":null,"name":"just pojo哒哒哒","bi":["java.math.BigInteger",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121],"bd":["java.math.BigDecimal",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423],"pojoType":"SYSTEM","pojoTime":"2021-05-17 18:06:34"}]"
+        //"["com.sc.sample.redis.dto.Pojo2RedisDto",{"id":1234534535354,"bl":false,"s":null,"name":"just pojo哒哒哒","bi":["java.math.BigInteger",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121],"bd":["java.math.BigDecimal",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423],"pojoType":"SYSTEM","pojoTime":"2021-05-17 18:06:34"}]"的byte[]
         //redis中保存为
         //"[\"com.sc.sample.redis.dto.Pojo2RedisDto\",{\"id\":1234534535354,\"bl\":false,\"s\":null,\"name\":\"just pojo\xe5\x93\x92\xe5\x93\x92\xe5\x93\x92\",\"bi\":[\"java.math.BigInteger\",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121],\"bd\":[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423],\"pojoType\":\"SYSTEM\",\"pojoTime\":\"2021-05-17 18:06:34\"}]"
         redisTemplate.opsForValue().set("Pojo", pojo2RedisDto);
@@ -342,6 +348,13 @@ public class SampleRedisTestController {
      */
     @PostMapping("setBytes")
     public JsonResult setBytes() {
+
+        Integer somethingNull = null;
+        genericRedisTemplate.opsForValue().set("Null", flCustomSerializer.serializeAsBytes(somethingNull));//序列化为 byte[0], redis中保存为 "Null"->""
+        byte[] nullBytes = genericRedisTemplate.opsForValue().get("Null");//从redis取出，保存为 byte[]
+        Object nullVal1 = flCustomSerializer.deserialize(nullBytes); //反序列化为 null
+        Integer nullVal2 = flCustomSerializer.deserialize(nullBytes, Integer.class);//反序列化为 null
+
 
         genericRedisTemplate.opsForValue().set("Boolean", flCustomSerializer.serializeAsBytes(true));//序列化为 byte[], redis中保存为 "Boolean"->"true"
         byte[] booleanBytes = genericRedisTemplate.opsForValue().get("Boolean");//从redis取出，保存为 byte[]
