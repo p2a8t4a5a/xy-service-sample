@@ -70,5 +70,12 @@ public class FlCustomSerializer {
         }
     }
 
+    public byte[] serializeAsBytes(Object value) {
+        try {
+            return this.objectMapper.writeValueAsBytes(value);
+        } catch (Exception ex) {
+            throw new BizException(() -> "Could not write JSON: " + ex.getMessage());
+        }
+    }
 
 }

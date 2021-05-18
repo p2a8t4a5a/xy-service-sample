@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sc.common.utils.JacksonUtils;
 import com.sc.sample.redis.FlCustomSerializer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -45,6 +46,45 @@ public class RedisConfig {
         return new FlCustomSerializer();
     }
 
+
+    @Bean
+    @Qualifier("customRedisTemplate")//the same as StringRedisTemplate
+    public RedisTemplate<String, String> customRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, String> stringRedisTemplate = new RedisTemplate<>();
+        stringRedisTemplate.setConnectionFactory(redisConnectionFactory);
+
+        RedisSerializer<?> stringSerializer = new StringRedisSerializer();
+        stringRedisTemplate.setKeySerializer(stringSerializer);// key序列化
+        stringRedisTemplate.setValueSerializer(stringSerializer);// value序列化
+        stringRedisTemplate.setHashKeySerializer(stringSerializer);// Hash key序列化
+        stringRedisTemplate.setHashValueSerializer(stringSerializer);// Hash value序列化
+
+        stringRedisTemplate.afterPropertiesSet();
+        return stringRedisTemplate;
+    }
+
+
+
+
+    @Bean
+    public RedisTemplate<String, byte[]> genericRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, byte[]> genericRedisTemplate = new RedisTemplate<>();
+        genericRedisTemplate.setConnectionFactory(redisConnectionFactory);
+
+        RedisSerializer<?> stringSerializer = new StringRedisSerializer();
+
+        genericRedisTemplate.setEnableDefaultSerializer(false);
+        genericRedisTemplate.setKeySerializer(stringSerializer);// key序列化
+        genericRedisTemplate.setValueSerializer(null);// value序列化，设置为null
+        genericRedisTemplate.setHashKeySerializer(stringSerializer);// Hash key序列化
+        genericRedisTemplate.setHashValueSerializer(null);// Hash value序列化，设置为null
+
+        return genericRedisTemplate;
+    }
+
+
+
+
     //存在问题，see SampleRedisTestController.getNumber
     //key-value(value是Number类型); key-hash(hash-value是Number类型); key-lists(lists每个元素是Number)
     //eg: Byte,Short,Integer,Long,Float,Double,BigInteger,BigDecimal
@@ -68,26 +108,6 @@ public class RedisConfig {
 
         return numberRedisTemplate;
     }
-
-
-    //key-value(value); key-hash; key-list(list-value)
-    //value,list-value类型: Boolean,Character,Byte,Short,Integer,Long,Float,Double,BigInteger,BigDecimal
-    //                                String,Enum,LocalDateTime
-    //hash-key,hash-value是Object类型，hash-key,hash-value序列化器设置为StringSerializer
-    /*@Bean
-    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, String> stringRedisTemplate = new RedisTemplate<>();
-        stringRedisTemplate.setConnectionFactory(redisConnectionFactory);
-
-        RedisSerializer<?> stringSerializer = new StringRedisSerializer();
-        stringRedisTemplate.setKeySerializer(stringSerializer);// key序列化
-        stringRedisTemplate.setValueSerializer(stringSerializer);// value序列化
-        stringRedisTemplate.setHashKeySerializer(stringSerializer);// Hash key序列化
-        stringRedisTemplate.setHashValueSerializer(stringSerializer);// Hash value序列化
-
-        stringRedisTemplate.afterPropertiesSet();
-        return stringRedisTemplate;
-    }*/
 
 
 }
