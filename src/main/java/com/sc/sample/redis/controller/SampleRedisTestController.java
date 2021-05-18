@@ -4,7 +4,7 @@ package com.sc.sample.redis.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.sc.common.utils.ReflectUtils;
 import com.sc.common.vo.JsonResult;
-import com.sc.sample.redis.FlCustomSerializer;
+import com.sc.common.redis.FlCustomSerializer;
 import com.sc.sample.redis.dto.*;
 import com.sc.sample.redis.enums.PojoDtoEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +46,7 @@ public class SampleRedisTestController {
     /**
      * 一种操作方法即
      *  使用RedisTemplate<String, String>,value,list-value,hash-value均当作String
-     *  将序列化和反序列化外放:
+     *  "将序列化和反序列化外放"（此为核心思想）:
      *   1.将对象序列化成String: 使用ObjectMapper将任意对象序列化成String
      *   2.使用stringRedisTemplate写到redis: 使用StringRedisSerializer(默认UTF-8编码)将String根据UTF-8转化为byte[],将byte[]发送给redis
      *   3.使用stringRedisTemplate从redis读,保存为String: 从redis读出byte[], 使用StringRedisSerializer(默认UTF-8编码)将byte[]根据UTF-8转化为String
@@ -368,8 +366,10 @@ public class SampleRedisTestController {
         redisTemplate.opsForHash().putAll("PojoHash", pojoMap);
         //3.从redis取得Map，Map中每一个value都使用ObjectMapper反序列化
         Map<Object, Object> hashVal = redisTemplate.opsForHash().entries("PojoHash");
-        //4.将Map转化为bean, TODO Map2Bean error: map中pojoTime是String，无法直接设置成bean的LocalDateTime对象, Pojo(有类型)-->Map(有类型)-->序列化保存到redis(有些字段类型丢失，如序列化成了String)-->从redis取出保存为Map(有些字段类型丢失)-->Pojo(报错: 有些字段类型不对)
+        //4.将Map转化为bean,  Map2Bean error: map中pojoTime是String，无法直接设置成bean的LocalDateTime对象, Pojo(有类型)-->Map(有类型)-->序列化保存到redis(有些字段类型丢失，如序列化成了String)-->从redis取出保存为Map(有些字段类型丢失)-->Pojo(报错: 有些字段类型不对)
         //Pojo2RedisDto bean = ReflectUtils.map2Bean(hashVal, Pojo2RedisDto.class);
+        //link: 第3,4两步放在genericRedisTemplate
+
 
         return JsonResult.buildSuccessResult(resultToUse);
     }
@@ -378,7 +378,7 @@ public class SampleRedisTestController {
     /**
      * 第三种操作方法为
      *   使用RedisTemplate<String, byte[]>,value,list-value,hash-value本身均是byte[],且均使用null: 如果序列化器为null并且已经是byte[]，就直接使用该byte[]:
-     *   将序列化和反序列化外放:
+     *   "将序列化和反序列化外放"（此为核心思想）:
      *   1.将对象序列化成byte[]: 使用ObjectMapper将任意对象序列化成byte[]
      *   2.使用genericRedisTemplate写到redis: 直接将byte[]发送给redis
      *   3.使用genericRedisTemplate从redis读,保存为byte[]: 从redis读出byte[],返回byte[]
@@ -540,6 +540,11 @@ public class SampleRedisTestController {
         //4.反序列化为Pojo
         Pojo2RedisDto pojoDe = flCustomSerializer.deserialize(result, Pojo2RedisDto.class);
 
+        //the other 将bean写成redis 的 hash
+        //3.从redis取得Map，Map中value是byte[]
+        Map<Object, Object> hashVal = genericRedisTemplate.opsForHash().entries("PojoHash");
+        //4.将Map转化为bean
+        Pojo2RedisDto bean = ReflectUtils.map2Bean(hashVal, Pojo2RedisDto.class, flCustomSerializer);
 
         return JsonResult.buildSuccessResult(pojoDe);
     }
