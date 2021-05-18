@@ -64,8 +64,6 @@ public class RedisConfig {
     }
 
 
-
-
     @Bean
     public RedisTemplate<String, byte[]> genericRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, byte[]> genericRedisTemplate = new RedisTemplate<>();
