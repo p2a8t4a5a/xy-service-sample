@@ -1,4 +1,4 @@
-package com.sc.sample.redis.lettuce;
+package com.sc.sample.redis;
 
 /**
  * TODO Lettuce core api
