@@ -2,12 +2,14 @@ package com.sc.sample.controller.scan;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.sc.common.bo.scan.Sample2ScanBo;
 import com.sc.common.bo.scan.Sample2ScanPageBo;
 import com.sc.common.dto.PageDto;
 import com.sc.common.enums.JsonResultEnum;
 import com.sc.common.enums.ScanTypeEnum;
 import com.sc.common.utils.AssertUtils;
 import com.sc.common.vo.JsonResult;
+import com.sc.common.vo.PageJsonResultVo;
 import com.sc.sample.api.Sample2ServiceApi;
 import com.sc.sample.dto.scan.SampleScanAddDto;
 import com.sc.sample.dto.scan.SampleScanDelDto;
@@ -64,7 +66,9 @@ public class SampleScanController {
         if(scan != null) {
             scanVo = SampleScanVo.builder().id(scan.getId()).name(scan.getName()).scanType(scan.getScanType()).scanTime(scan.getScanTime()).createTime(scan.getCreateTime()).modifyTime(scan.getModifyTime()).build();
         }
-        return JsonResult.buildSuccessResult(scanVo);
+        JsonResult<SampleScanVo> result = JsonResult.buildSuccessResult(scanVo);
+
+        return result;
     }
 
     @GetMapping("getByIds")
@@ -166,12 +170,12 @@ public class SampleScanController {
     //rpc from service-sample2
     @GetMapping("getByIdRpc")
     public JsonResult getByIdRpc(Long id) {
-        JsonResult result = sample2ServiceApi.rpcGetById(id);
+        JsonResult<Sample2ScanBo> result = sample2ServiceApi.rpcGetById(id);
         return result;
     }
     @GetMapping("getByIdsRpc")
     public JsonResult getByIdsRpc(@RequestParam(name = "ids", required = false) List<Long> ids) {
-        JsonResult result = sample2ServiceApi.rpcGetByIds(ids);
+        JsonResult<List<Sample2ScanBo>> result = sample2ServiceApi.rpcGetByIds(ids);
         return result;
     }
 
@@ -182,7 +186,7 @@ public class SampleScanController {
         AssertUtils.ifTrue(scanSelDto.getPageSize()<0, () -> "pageSize不能为负数", () -> JsonResultEnum.FAIL.getCode());
 
         Sample2ScanPageBo scanPageBo = Sample2ScanPageBo.builder().id(scanSelDto.getId()).name(scanSelDto.getName()).scanType(scanSelDto.getScanType()).scanTime(scanSelDto.getScanTime()).build();
-        JsonResult result = sample2ServiceApi.rpcListByPojo(scanPageBo);
+        JsonResult<PageJsonResultVo<Sample2ScanBo>> result = sample2ServiceApi.rpcListByPojo(scanPageBo);
         return result;
     }
 
@@ -194,7 +198,7 @@ public class SampleScanController {
                                    @RequestParam(name = "page", required = false) Long page,
                                    @RequestParam(name = "pageSize", required = false) Long pageSize) {
 
-        JsonResult result = sample2ServiceApi.rpcListByParams(id, scanType, scanTime, page, pageSize);
+        JsonResult<PageJsonResultVo<Sample2ScanBo>> result = sample2ServiceApi.rpcListByParams(id, scanType, scanTime, page, pageSize);
         return result;
     }
 
@@ -205,7 +209,7 @@ public class SampleScanController {
         AssertUtils.ifNull(scanPageBo, () -> "查询参数不能为空", () -> JsonResultEnum.FAIL.getCode());
         AssertUtils.ifTrue(scanPageBo.getPageSize()<0, () -> "pageSize不能为负数", () -> JsonResultEnum.FAIL.getCode());
 
-        JsonResult result = sample2ServiceApi.rpcListByPojo2(scanPageBo);
+        JsonResult<PageJsonResultVo<Sample2ScanBo>> result = sample2ServiceApi.rpcListByPojo2(scanPageBo);
         return result;
     }
 

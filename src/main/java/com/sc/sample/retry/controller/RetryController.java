@@ -2,7 +2,6 @@ package com.sc.sample.retry.controller;
 
 import com.sc.common.bo.scan.Sample2ScanBo;
 import com.sc.common.exception.BizException;
-import com.sc.common.vo.BasicJsonResult;
 import com.sc.common.vo.JsonResult;
 import com.sc.sample.dto.scan.SampleScanAddDto;
 import com.sc.sample.dto.scan.SampleScanUpdateDto;
@@ -91,11 +90,11 @@ public class RetryController {
 
     @GetMapping("retryForRestTemplate")
     public JsonResult retryForRestTemplate(Long id) {
-        /*BasicJsonResult result = restTemplate.getForObject("http://service-sample2/sample2ScanRpc/getById?id=" + id,
-                BasicJsonResult.class);*/
+        /*JsonResult result = restTemplate.getForObject("http://service-sample2/sample2ScanRpc/getById?id=" + id,
+                JsonResult.class);*/
 
-        BasicJsonResult<Sample2ScanBo> result = restTemplate.exchange("http://service-sample2/sample2ScanRpc/getById?id=" + id,
-                HttpMethod.GET, null, new ParameterizedTypeReference<BasicJsonResult<Sample2ScanBo>>() {
+        JsonResult<Sample2ScanBo> result = restTemplate.exchange("http://service-sample2/sample2ScanRpc/getById?id=" + id,
+                HttpMethod.GET, null, new ParameterizedTypeReference<JsonResult<Sample2ScanBo>>() {
                 }).getBody();
 
         return result;
