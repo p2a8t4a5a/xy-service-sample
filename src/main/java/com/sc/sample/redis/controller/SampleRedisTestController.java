@@ -350,6 +350,17 @@ public class SampleRedisTestController {
         Object result = redisTemplate.opsForValue().get("Pojo");//result为Pojo2RedisDto类型
         Pojo2RedisDto resultToUse = (Pojo2RedisDto) result;
 
+        
+        List<Pojo2RedisDto> pojoList = new ArrayList<>();
+        pojoList.add(pojo2RedisDto);
+        //ObjectMapper将此List序列化成
+        //"["java.util.ArrayList",[["com.sc.sample.redis.dto.Pojo2RedisDto",{"id":1234534535354,"bl":false,"s":null,"name":"just pojo哒哒哒","bi":["java.math.BigInteger",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121],"bd":["java.math.BigDecimal",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423],"pojoType":"SYSTEM","pojoTime":"2021-05-29 10:48:50"}]]]"
+        //redis中保存为
+        //"[\"java.util.ArrayList\",[[\"com.sc.sample.redis.dto.Pojo2RedisDto\",{\"id\":1234534535354,\"bl\":false,\"s\":null,\"name\":\"just pojo\xe5\x93\x92\xe5\x93\x92\xe5\x93\x92\",\"bi\":[\"java.math.BigInteger\",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121],\"bd\":[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423],\"pojoType\":\"SYSTEM\",\"pojoTime\":\"2021-05-29 10:48:50\"}]]]"
+        redisTemplate.opsForValue().set("PojoList", pojoList);
+        Object listResult = redisTemplate.opsForValue().get("PojoList");
+        List<Pojo2RedisDto> listToUse = (List<Pojo2RedisDto>) listResult;
+        
         //the other 将bean写成redis 的 hash
         //1.将bean转化为Map<String, Object>
         Map<String, Object> pojoMap = ReflectUtils.bean2Map(resultToUse);
