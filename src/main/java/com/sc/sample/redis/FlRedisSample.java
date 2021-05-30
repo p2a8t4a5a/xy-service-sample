@@ -11,7 +11,7 @@ public class FlRedisSample {
 
     /**
      * Redis的auto configuration {@link org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration}
-     *
+     *                           {@link org.springframework.boot.autoconfigure.data.redis.LettuceConnectionConfiguration}
      * 第一: 使用Lettuce接入redis cluster
      *     1.redis cluster的配置加载生成 {@link org.springframework.data.redis.connection.RedisClusterConfiguration}
      *       spring:
@@ -31,7 +31,7 @@ public class FlRedisSample {
      *           database: 0
      *           ##是否开启ssl/tls
      *           ssl: false
-     *           ##connection url(当然cluster下已配置了nodes),overrides host,port and password, uesr is ignored
+     *           ##connection url(当然cluster下已配置了nodes),overrides host,port and password, user is ignored
      *           url: redis://user:password@47.98.221.91:6379
      *           host: ...
      *           port: ...
@@ -86,6 +86,43 @@ public class FlRedisSample {
      * TODO using unix domain socket; pub/sub; redis stream; redis transaction; redis pipeline; redis script; redis.support更多支持
      *
      * TODO reactive
+     *
+     */
+
+
+    /**
+     * 额外接入Redisson
+     * RedissonAutoConfiguration: {@link org.redisson.spring.starter.RedissonAutoConfiguration}
+     * 1.redisson的配置，配置加载生成 RedissonProperties
+     *   spring:
+     *     redis:
+     *       redisson:
+     *         ##指定配置文件
+     *         file: classpath:redisson.yml
+     *         config: |
+     *           clusterServersConfig:  ##cluster配置
+     *             idleConnectionTimeout: 10000
+     *             connectTimeout: 10000
+     *             timeout: 3000
+     *             retryAttempts: 3
+     *             retryInterval: 1500
+     *             nodeAddresses:
+     *             - "redis://47.98.221.91:6379"
+     *             - "redis://47.98.221.91:6380"
+     *             - "redis://47.98.221.91:6381"
+     *             scanInterval: 1000
+     *             pingConnectionInterval: 0
+     *           threads: 16
+     *           nettyThreads: 32
+     *           transportMode: "NIO"
+     * 2.构建 RedissonClient，RedissonConnectionFactory(是RedisConnectionFactory的实现)
+     *   这将和LettuceConnectionFactory的自动配置混淆 TODO link: 手动创建redisson客户端
+     *   而实际上，只接入Redisson就可以覆盖之前的用法。。。
+     *手动创建redisson客户端
+     *{@link com.sc.sample.config.RedissonConfig}
+     *TODO 并且目前RedissonConfig中没有指定codec，即会采用默认的codec，如bucket中默认使用FstCodec，lock中会用到LongCodec
+     *TODO 考虑1: 已在用的RedisTemplate和Redisson使用各自的序列化，不干扰
+     *TODO 考虑2: RedisTemplate和Redisson都是用Jaskcon序列化并且使用相同配置的ObjectMapper
      *
      */
 
