@@ -8,9 +8,11 @@ spring:
   cloud:
     nacos:
       discovery:
+        #namespace: 579e1018-46bd-40e2-8802-98f69d98f24e
         server-addr: 127.0.0.1:8848
         #endpoint: dev-xy-nacos.douxindata.com:80
       config:
+        #namespace: 579e1018-46bd-40e2-8802-98f69d98f24e
         file-extension: yaml
         server-addr: 127.0.0.1:8848
         #server-addr: 192.168.0.50:8848,192.168.0.51:8848,192.168.0.52:8848
