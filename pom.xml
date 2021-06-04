@@ -14,6 +14,7 @@
         <version>1.0.0</version>
         <relativePath/>
     </parent>
+
     <artifactId>xy-service-sample</artifactId>
     <!-- 当前版本号1.0.0，如果1.0.0稳定后，继续开发1.0.1，则将版本号改成1.0.1 -->
     <version>1.0.0</version>
@@ -26,10 +27,8 @@
     </scm>
 
     <properties>
-        <skipTests>true</skipTests>
         <!--当xy-common版本号变更时，此处也发生变更 -->
         <xy-common.version>1.0.0</xy-common.version>
-
         <service-sample-api.version>1.0.0</service-sample-api.version>
         <service-sample.version>1.0.0</service-sample.version>
     </properties>
