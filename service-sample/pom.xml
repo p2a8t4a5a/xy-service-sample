@@ -62,10 +62,10 @@
             <groupId>com.xy</groupId>
             <artifactId>xy-common</artifactId>
         </dependency>
-        <!-- service-sample-api -->
+        <!-- service-sample2-api -->
         <dependency>
             <groupId>com.xy</groupId>
-            <artifactId>service-sample-api</artifactId>
+            <artifactId>service-sample2-api</artifactId>
         </dependency>
         <!-- spring boot -->
         <dependency>

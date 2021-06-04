@@ -16,7 +16,7 @@ import org.springframework.retry.annotation.EnableRetry;
 @RefreshScope
 @EnableCircuitBreaker
 @EnableHystrixDashboard
-@EnableFeignClients
+@EnableFeignClients("com.xy")
 @EnableRetry
 public class SampleApplication {
 

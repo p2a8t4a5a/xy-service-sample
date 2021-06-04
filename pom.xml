@@ -31,6 +31,8 @@
         <xy-common.version>1.0.0</xy-common.version>
         <service-sample-api.version>1.0.0</service-sample-api.version>
         <service-sample.version>1.0.0</service-sample.version>
+
+        <service-sample2-api.version>1.0.0</service-sample2-api.version>
     </properties>
 
     <dependencyManagement>
@@ -46,6 +48,12 @@
                 <groupId>com.xy</groupId>
                 <artifactId>service-sample-api</artifactId>
                 <version>${service-sample-api.version}</version>
+            </dependency>
+            <!-- service-sample2.api -->
+            <dependency>
+                <groupId>com.xy</groupId>
+                <artifactId>service-sample2-api</artifactId>
+                <version>${service-sample2-api.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
