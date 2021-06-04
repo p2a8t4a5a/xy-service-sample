@@ -2,8 +2,6 @@ package com.xy.sample.controller.scan;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.sc.common.bo.scan.Sample2ScanBo;
-import com.sc.common.bo.scan.Sample2ScanPageBo;
 import com.sc.common.dto.PageDto;
 import com.sc.common.enums.JsonResultEnum;
 import com.sc.common.enums.ScanTypeEnum;
@@ -18,6 +16,8 @@ import com.xy.sample.entity.scan.SampleScan;
 import com.xy.sample.service.scan.SampleScanService;
 import com.xy.sample.vo.scan.SampleScanVo;
 import com.xy.sample2.api.Sample2ServiceApi;
+import com.xy.sample2.api.bo.Sample2ScanBo;
+import com.xy.sample2.api.bo.Sample2ScanPageBo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -168,52 +168,52 @@ public class SampleScanController {
     }
 
     //rpc from service-sample2
-    @GetMapping("getByIdRpc")
-    public JsonResult getByIdRpc(Long id) {
-        JsonResult<Sample2ScanBo> result = sample2ServiceApi.rpcGetById(id);
+    @GetMapping("getByIdFromSample2")
+    public JsonResult getByIdFromSample2(Long id) {
+        JsonResult<Sample2ScanBo> result = sample2ServiceApi.getById(id);
         return result;
     }
-    @GetMapping("getByIdsRpc")
-    public JsonResult getByIdsRpc(@RequestParam(name = "ids", required = false) List<Long> ids) {
-        JsonResult<List<Sample2ScanBo>> result = sample2ServiceApi.rpcGetByIds(ids);
+    @GetMapping("getByIdsFromSample2")
+    public JsonResult getByIdsFromSample2(@RequestParam(name = "ids", required = false) List<Long> ids) {
+        JsonResult<List<Sample2ScanBo>> result = sample2ServiceApi.getByIds(ids);
         return result;
     }
 
     //Get请求的Enum中@JsonCreator
-    @GetMapping("listByPojoRpc")
-    public JsonResult listByPojoRpc(SampleScanSelDto scanSelDto) {
+    @GetMapping("listByPojoFromSample2")
+    public JsonResult listByPojoFromSample2(SampleScanSelDto scanSelDto) {
         AssertUtils.ifNull(scanSelDto, () -> "查询参数不能为空", () -> JsonResultEnum.FAIL.getCode());
         AssertUtils.ifTrue(scanSelDto.getPageSize()<0, () -> "pageSize不能为负数", () -> JsonResultEnum.FAIL.getCode());
 
         Sample2ScanPageBo scanPageBo = Sample2ScanPageBo.builder().id(scanSelDto.getId()).name(scanSelDto.getName()).scanType(scanSelDto.getScanType()).scanTime(scanSelDto.getScanTime()).build();
-        JsonResult<PageJsonResultVo<Sample2ScanBo>> result = sample2ServiceApi.rpcListByPojo(scanPageBo);
+        JsonResult<PageJsonResultVo<Sample2ScanBo>> result = sample2ServiceApi.listByPojo(scanPageBo);
         return result;
     }
 
     //Get请求的Enum中@JsonCreator
-    @GetMapping("listByParamsRpc")
-    public JsonResult listByParamsRpc(@RequestParam(name = "id", required = false) Long id,
+    @GetMapping("listByParamsFromSample2")
+    public JsonResult listByParamsFromSample2(@RequestParam(name = "id", required = false) Long id,
                                    @RequestParam(name = "scanType", required = false) ScanTypeEnum scanType,  //String convert to Enum, 使用默认的StringCovertToEnum
                                    @RequestParam(name = "scanTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime scanTime, //String covert to LocalDateTime，String转化为LocalDateTime，默认的String格式是iso格式
                                    @RequestParam(name = "page", required = false) Long page,
                                    @RequestParam(name = "pageSize", required = false) Long pageSize) {
 
-        JsonResult<PageJsonResultVo<Sample2ScanBo>> result = sample2ServiceApi.rpcListByParams(id, scanType, scanTime, page, pageSize);
+        JsonResult<PageJsonResultVo<Sample2ScanBo>> result = sample2ServiceApi.listByParams(id, scanType, scanTime, page, pageSize);
         return result;
     }
 
 
     //compare with listByPojo, Get请求将参数放在请求体，使用@RequestBody解析请求体参数
-    @GetMapping("listByPojo2Rpc")
-    public JsonResult listByPojo2Rpc(@RequestBody Sample2ScanPageBo scanPageBo) {
+    @GetMapping("listByPojo2FromSample2")
+    public JsonResult listByPojo2FromSample2(@RequestBody Sample2ScanPageBo scanPageBo) {
         AssertUtils.ifNull(scanPageBo, () -> "查询参数不能为空", () -> JsonResultEnum.FAIL.getCode());
         AssertUtils.ifTrue(scanPageBo.getPageSize()<0, () -> "pageSize不能为负数", () -> JsonResultEnum.FAIL.getCode());
 
-        JsonResult<PageJsonResultVo<Sample2ScanBo>> result = sample2ServiceApi.rpcListByPojo2(scanPageBo);
+        JsonResult<PageJsonResultVo<Sample2ScanBo>> result = sample2ServiceApi.listByPojo2(scanPageBo);
         return result;
     }
 
-    @PostMapping("saveRpc")
+    @PostMapping("saveSample2")
     public JsonResult saveRpc(@RequestBody @Valid SampleScanAddDto scanAddDto) {
         try {
             sampleScanService.saveAndRpc(scanAddDto);

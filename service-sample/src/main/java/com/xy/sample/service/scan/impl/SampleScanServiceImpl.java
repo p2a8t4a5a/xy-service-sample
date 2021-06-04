@@ -2,7 +2,6 @@ package com.xy.sample.service.scan.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sc.common.bo.scan.Sample2ScanAddBo;
 import com.sc.common.exception.BizException;
 import com.sc.common.vo.JsonResult;
 import com.xy.sample.mapper.scan.SampleScanMapper;
@@ -12,6 +11,7 @@ import com.xy.sample.entity.scan.SampleScan;
 import com.xy.sample.service.scan.SampleScanService;
 import com.xy.sample.vo.scan.SampleScanVo;
 import com.xy.sample2.api.Sample2ServiceApi;
+import com.xy.sample2.api.bo.Sample2ScanAddBo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class SampleScanServiceImpl extends ServiceImpl<SampleScanMapper, SampleS
         SampleScan sampleScan = SampleScan.builder().name(scanAddDto.getName()).scanType(scanAddDto.getScanType()).scanTime(scanAddDto.getScanTime()).build();
         this.save(sampleScan);
         Sample2ScanAddBo scanAddBo = Sample2ScanAddBo.builder().name(scanAddDto.getName()).scanType(scanAddDto.getScanType()).scanTime(scanAddDto.getScanTime()).build();
-        JsonResult result = sample2ServiceApi.rpcSave(scanAddBo);
+        JsonResult result = sample2ServiceApi.save(scanAddBo);
         if(!result.getSuccess())
             throw new BizException(() -> "rpc 保存失败");
 

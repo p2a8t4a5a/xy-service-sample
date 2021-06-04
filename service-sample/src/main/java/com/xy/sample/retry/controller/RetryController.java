@@ -1,11 +1,11 @@
 package com.xy.sample.retry.controller;
 
-import com.sc.common.bo.scan.Sample2ScanBo;
 import com.sc.common.exception.BizException;
 import com.sc.common.vo.JsonResult;
 import com.xy.sample.retry.FlRetrySample;
 import com.xy.sample.dto.scan.SampleScanAddDto;
 import com.xy.sample.dto.scan.SampleScanUpdateDto;
+import com.xy.sample2.api.bo.Sample2ScanBo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;

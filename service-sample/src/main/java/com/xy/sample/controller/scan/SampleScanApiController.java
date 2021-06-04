@@ -1,7 +1,8 @@
 package com.xy.sample.controller.scan;
 
-import com.sc.common.bo.scan.SampleScanBo;
 import com.sc.common.vo.JsonResult;
+//import com.xy.sample.api.bo.SampleScanBo;
+import com.xy.sample.api.bo.SampleScanBo;
 import com.xy.sample.entity.scan.SampleScan;
 import com.xy.sample.service.scan.SampleScanService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@RequestMapping("/sampleScanRpc/")
-public class SampleScanRpcController {
+@RequestMapping("/sampleScanApi/")
+public class SampleScanApiController {
 
     @Autowired
     private SampleScanService sampleScanService;

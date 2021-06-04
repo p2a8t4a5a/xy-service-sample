@@ -12,7 +12,7 @@ import org.springframework.retry.annotation.EnableRetry;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan("com.xy")
+@ComponentScan({"com.xy", "com.sc"})
 @RefreshScope
 @EnableCircuitBreaker
 @EnableHystrixDashboard
