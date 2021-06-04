@@ -3,174 +3,51 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <modules>
+        <module>service-sample-api</module>
+        <module>service-sample</module>
+    </modules>
 
     <parent>
-        <groupId>com.sc</groupId>
-        <artifactId>common-parent-boot</artifactId>
-        <version>1.0</version>
+        <groupId>com.xy</groupId>
+        <artifactId>xy-common-dependencies</artifactId>
+        <version>1.0.0</version>
         <relativePath/>
     </parent>
-    <artifactId>service-sample</artifactId>
-    <!-- 当前版本号1.0，如果1.0稳定后，继续开发1.1，则将版本号改成1.1 -->
-    <version>1.0</version>
-    <packaging>jar</packaging>
-    <name>service-sample</name>
-    <description>service-sample</description>
-    <url>https://www.github.com/freshlml/service-sample</url>
+    <artifactId>xy-service-sample</artifactId>
+    <!-- 当前版本号1.0.0，如果1.0.0稳定后，继续开发1.0.1，则将版本号改成1.0.1 -->
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>xy-service-sample</name>
+    <description>xy-service-sample</description>
+    <url>https://www.github.com/freshlml/xy-service-sample</url>
     <scm>
-        <url>https://www.github.com/freshlml/service-sample</url>
+        <url>https://www.github.com/freshlml/xy-service-sample</url>
     </scm>
 
     <properties>
         <skipTests>true</skipTests>
-        <!--当common版本号变更时，此处也发生变更 -->
-        <common.version>1.0</common.version>
+        <!--当xy-common版本号变更时，此处也发生变更 -->
+        <xy-common.version>1.0.0</xy-common.version>
+
+        <service-sample-api.version>1.0.0</service-sample-api.version>
     </properties>
 
-    <!-- 定义profiles
-     1、父pom中默认定义了profiles，此pom中可以选择通过命令激活父pom的profile,eg: mvn clean package -Pdev (则线上时mvn的打包命令需要额外加参数)
-        note: 子pom中定义和父pom相同的profile然后通过activeByDefault激活是不行的
-     2、或者直接在此pom中定义profile(这样即可方便的在此pom中指定激活哪一个profile),如下:
-    -->
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <package.environment>dev</package.environment>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>test</id>
-            <properties>
-                <package.environment>test</package.environment>
-            </properties>
-            <!--<activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>-->
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <package.environment>prod</package.environment>
-            </properties>
-            <!--<activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>-->
-        </profile>
-    </profiles>
+    <dependencyManagement>
+        <dependencies>
+            <!-- xy-common -->
+            <dependency>
+                <groupId>com.xy</groupId>
+                <artifactId>xy-common</artifactId>
+                <version>${xy-common.version}</version>
+            </dependency>
+            <!-- service-sample-api -->
+            <dependency>
+                <groupId>com.xy</groupId>
+                <artifactId>service-sample-api</artifactId>
+                <version>${service-sample-api.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-    <dependencies>
-        <!-- common -->
-        <dependency>
-            <groupId>com.sc</groupId>
-            <artifactId>common</artifactId>
-            <version>${common.version}</version>
-        </dependency>
-        <!-- spring boot -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- mvc -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <!-- actuator -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <!-- data-redis -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-        <!-- nacos -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-        <!-- netflix hystrix -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
-        </dependency>
-        <!-- netflix hystrix dashboard -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
-        </dependency>
-        <!-- netflix ribbon -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
-        </dependency>
-        <!-- open feign -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-        <!-- sleuth -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-sleuth</artifactId>
-        </dependency>
-        <!-- spring retry -->
-        <dependency>
-            <groupId>org.springframework.retry</groupId>
-            <artifactId>spring-retry</artifactId>
-        </dependency>
-        <!-- jdbc -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <!-- druid -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-        </dependency>
-        <!-- redisson -->
-        <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson</artifactId>
-            <version>3.11.5</version>
-        </dependency>
-        <!-- redisson-spring-boot-starter -->
-        <!--<dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
-            <version>3.11.5</version>
-        </dependency>-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <finalName>${project.artifactId}-${project.version}</finalName>
-
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
