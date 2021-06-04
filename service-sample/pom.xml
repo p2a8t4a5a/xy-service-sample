@@ -11,7 +11,7 @@
 
     <groupId>com.xy</groupId>
     <artifactId>service-sample</artifactId>
-    <version>1.0.0</version>
+    <version>${service-sample.version}</version>
     <packaging>jar</packaging>
     <name>service-sample</name>
     <description>service-sample</description>
