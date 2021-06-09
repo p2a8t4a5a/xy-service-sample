@@ -54,7 +54,7 @@ public class FlRefreshSample {
      * public class FlRedissonProperties {...}
      * 当redisson相关配置发生变化时,FlRedissonProperties中配置项得到更新
      * RedissonClient使用@RefreshScope标注，将会触发该bean的重新构造
-     * 
+     *
      */
 
 
