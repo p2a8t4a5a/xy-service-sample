@@ -1,10 +1,12 @@
-package com.xy.sample.rocketmq.listener;
+package com.xy.sample.rocketmq.tx.listener;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.sc.common.entity.rmq.RmqTx;
 import com.sc.common.rmq.config.FlRmqTxProducer;
-import com.sc.common.rmq.tx.FlRmqTxExecution;
 import com.xy.sample.dto.scan.SampleScanAddDto;
 import com.xy.sample.entity.scan.SampleScan;
+import com.xy.sample.service.rmq.RmqTxService;
 import com.xy.sample.service.scan.SampleScanService;
 import org.apache.rocketmq.client.producer.LocalTransactionState;
 import org.apache.rocketmq.client.producer.TransactionListener;
@@ -15,39 +17,47 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-@FlRmqTxProducer(producerName = "scanTxMQProducer", group = "sample-tx-scan-producer-group", corePoolSize = 2, maximumPoolSize = 2, keepAliveTime = 60000, blockingQueueSize = 2000)
+@FlRmqTxProducer(producerName = "scanTxMQProducer", group = "sample-tx-scan-producer-group", corePoolSize = 1, maximumPoolSize = 1, keepAliveTime = 50000, blockingQueueSize = 1000)
 public class ScanTxMQListener implements TransactionListener {
     private Logger log = LoggerFactory.getLogger(ScanTxMQListener.class);
 
     @Autowired
     private SampleScanService sampleScanService;
 
+    @Autowired
+    private RmqTxService rmqTxService;
+
     @Transactional
     @Override
     public LocalTransactionState executeLocalTransaction(Message message, Object o) {
         SampleScanAddDto dto = (SampleScanAddDto) o;
+
         SampleScan scan = SampleScan.builder().name(dto.getName()).scanType(dto.getScanType()).scanTime(dto.getScanTime()).build();
-        scan.setTxId(message.getTransactionId());
         sampleScanService.save(scan);
-        /*try {//本地事务阻塞后，check可能先执行,TODO
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-        return LocalTransactionState.UNKNOW;
+        //int i=1/0;
+        RmqTx rmqTx = RmqTx.builder().txId(message.getTransactionId()).checkStatus(0).build();
+        rmqTxService.save(rmqTx);
+
+        return LocalTransactionState.COMMIT_MESSAGE;
     }
 
     @Override
     public LocalTransactionState checkLocalTransaction(MessageExt messageExt) {
-
+        String txId = messageExt.getTransactionId();
         try {
-            SampleScan inserted = sampleScanService.getOne(new LambdaQueryWrapper<SampleScan>().select(SampleScan::getId).eq(SampleScan::getTxId, messageExt.getTransactionId()));
-            if (inserted != null) return LocalTransactionState.COMMIT_MESSAGE;
+            RmqTx rmqTx = rmqTxService.getOne(new LambdaQueryWrapper<RmqTx>().select(RmqTx::getId).eq(RmqTx::getTxId, txId));
+            if(rmqTx != null) {
+                try {
+                    rmqTxService.update(new LambdaUpdateWrapper<RmqTx>().set(RmqTx::getCheckStatus, 1).eq(RmqTx::getId, rmqTx.getId()));
+                } catch (Exception e) {
+                    log.warn("事务回查时更新check_status失败, txId={}", txId);
+                }
+                return LocalTransactionState.COMMIT_MESSAGE;
+            }
         } catch (Exception e) {
-            log.error("error while check, {}", e);
+            log.error("事务回查失败, txId={}", txId);
             return LocalTransactionState.ROLLBACK_MESSAGE;
         }
-
         return LocalTransactionState.ROLLBACK_MESSAGE;
     }
 }

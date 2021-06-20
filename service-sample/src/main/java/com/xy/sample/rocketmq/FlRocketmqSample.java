@@ -80,8 +80,8 @@ public class FlRocketmqSample {
      *  这些Producer实例用于发送消息，至于把消息发送到哪个topic，由发送时候的代码决定
      *  Producer实例属于一个Producer group,同一个jvm中(同一节点)一个Producer group只能对应一个Producer实例
      *  一个应用如果集群部署，多个jvm中(不同节点)的相同Producer实例属于同一个Producer group
-     * Producer实例命名: defaultMQProducer{@link FlRmqConfig},其他: [前缀]MQProducer，eg: otherMQProducer
-     * Producer group命名: 应用名[-前缀]-producer-group，eg: sample-other-producer-group
+     * Producer实例命名: defaultMQProducer{@link FlRmqConfig}, 其他: [前缀]MQProducer，eg: otherMQProducer
+     * Producer group命名: 应用名[-前缀]-producer-group，eg: sample-producer-group, sample-other-producer-group
      * #####在{@link FlRmqConfig}中，使用如下配置定义defaultMQProducer
      *     cus-rocketmq:
      *       producer:
@@ -92,16 +92,31 @@ public class FlRocketmqSample {
      *         retry-times-when-send-async-failed: 0
      *         retry-next-server: false
      *         max-message-size: 4194304
-     *    其他Producer实例,使用注解{@link FlRmqProducer}定义,注解解析{@link FlRmqProducerConfig}注册Producer,引用自动创建的Producer实例时使用@Lazy
+     * #####自定义Producer实例,使用注解{@link FlRmqProducer}定义,注解解析{@link FlRmqProducerConfig}注册Producer,引用自动创建的Producer实例时使用@Lazy
      *
      *
      * 4、tx Producer实例
-     * 一个应用定义若干tx Producer，用于发送不同类型的事务性消息，每一个tx Producer使用一个tx Producer group
-     *  至于把tx消息发送到哪个topic，由发送时候的代码决定
+     * 一个应用定义若干tx Producer，每一个tx Producer实例使用一个tx Producer group
+     *  这些Producer实例用于发送消息，至于把消息发送到哪个topic，由发送时候的代码决定
+     *  tx Producer实例属于一个Producer group,同一个jvm中(同一节点)一个tx Producer group只能对应一个tx Producer实例
      *  一个应用如果集群部署，多个jvm中(不同节点)的相同tx Producer实例属于同一个tx Producer group
-     *  tx Producer实例命名: [前缀]TxMQProducer，eg: scanTxMQProducer
-     *  tx Producer group命名: 应用名-tx[-前缀]-producer-group
-     * #####使用注解{@link FlRmqTxProducer}定义,解析注解{@link FlRmqTxProducerConfig}注册Tx Producer,引用自动创建的tx Producer实例时使用@Lazy
+     * tx Producer实例命名: defaultTxMQProducer{@link FlRmqConfig}, 其他: [前缀]TxMQProducer，eg: scanTxMQProducer
+     * tx Producer group命名: 应用名-tx[-前缀]-producer-group, eg: sample-tx-producer-group, sample-tx-scan-producer-group
+     * #####在{@link FlRmqConfig}中，使用如下配置定义defaultTxMQProducer
+     *     cus-rocketmq:
+     *       producer:
+     *         tx-group: sample-tx-producer-group
+     *         core-pool-size: 1
+     *         maximum-pool-size: 2
+     *         keep-alive-time: 60000
+     *         blocking-queue-size: 2000
+     *         send-message-timeout: 3000
+     *         compress-message-body-threshold: 4096
+     *         retry-times-when-send-failed: 2
+     *         retry-times-when-send-async-failed: 0
+     *         retry-next-server: false
+     *         max-message-size: 4194304
+     * #####自定义tx Producer实例，使用注解{@link FlRmqTxProducer}定义,解析注解{@link FlRmqTxProducerConfig}注册Tx Producer,引用自动创建的tx Producer实例时使用@Lazy
      *
      *
      * 5、消费者定义

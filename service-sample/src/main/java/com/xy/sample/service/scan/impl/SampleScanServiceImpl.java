@@ -2,6 +2,7 @@ package com.xy.sample.service.scan.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sc.common.constant.RmqConstants;
 import com.sc.common.exception.BizException;
 import com.sc.common.redis.FlCustomSerializer;
 import com.sc.common.rmq.bo.RmqScanUpdateBo;
@@ -11,15 +12,14 @@ import com.xy.sample.mapper.scan.SampleScanMapper;
 import com.xy.sample.dto.scan.SampleScanAddDto;
 import com.xy.sample.dto.scan.SampleScanSelDto;
 import com.xy.sample.entity.scan.SampleScan;
+import com.xy.sample.rocketmq.tx.model.ScanRmqTxModel;
 import com.xy.sample.service.scan.SampleScanService;
 import com.xy.sample.vo.scan.SampleScanVo;
 import com.xy.sample2.api.Sample2ServiceApi;
 import com.xy.sample2.api.bo.Sample2ScanAddBo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.producer.DefaultMQProducer;
-import org.apache.rocketmq.client.producer.SendResult;
-import org.apache.rocketmq.client.producer.SendStatus;
-import org.apache.rocketmq.client.producer.TransactionMQProducer;
+import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.client.producer.*;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +50,9 @@ public class SampleScanServiceImpl extends ServiceImpl<SampleScanMapper, SampleS
 
     @Autowired
     private FlRmqProperties flRmqProperties;
+
+    @Autowired
+    private TransactionMQProducer defaultTxMQProducer;
 
     @Lazy
     @Autowired
@@ -104,20 +107,51 @@ public class SampleScanServiceImpl extends ServiceImpl<SampleScanMapper, SampleS
     }
 
     @Override
-    public void txProducer(SampleScanAddDto scanDto) {
+    public boolean txProducer(SampleScanAddDto scanDto) {
         RmqScanUpdateBo bo = RmqScanUpdateBo.builder().name(scanDto.getName() + "--to update msg tx").scanType(scanDto.getScanType().getValue()).scanTime(scanDto.getScanTime()).build();
 
-        Message msg = new Message(flRmqProperties.getTopics().get("sample-tx-topic").getName(), flRmqProperties.getTopics().get("sample-tx-topic").getTags().get("tx-scan-update").getName(), /*scan.getId()+"",*/
+        Message msg = new Message(flRmqProperties.getTopics().get("sample-tx-topic").getName(), flRmqProperties.getTopics().get("sample-tx-topic").getTags().get("tx-scan-update").getName(),
+                flCustomSerializer.serializeAsBytes(bo));
+
+        //使用defaultTxMQProducer，必须实现RmqTxListenerService和ScanRmqTxModel
+        msg.putUserProperty(RmqConstants.DEFAULT_RMQ_TX_SERVICE_IMPL, "scanTmqTxService");
+        ScanRmqTxModel model = ScanRmqTxModel.builder().name(scanDto.getName()).scanTime(scanDto.getScanTime()).scanType(scanDto.getScanType()).build();
+        try {
+            TransactionSendResult sendResult = defaultTxMQProducer.sendMessageInTransaction(msg, model);//注意: 本地事务执行/事务回查时抛出的异常不会抛出来
+            if(sendResult.getSendStatus() != SendStatus.SEND_OK) { //处理SendResult，如果不是SEND_OK,返回false，表示执行失败(因为只有SEND_OK状态，本地事务才会执行)
+                return false;
+            }
+            if(sendResult.getLocalTransactionState() != LocalTransactionState.COMMIT_MESSAGE) {//本地事务如果执行失败，返回false
+                return false;
+            }
+        } catch (MQClientException e) { //如果发生异常，抛出异常，controller调用处捕获异常，返回给前端失败
+            log.error(e.getMessage());
+            throw new BizException(() -> e.getMessage());
+        }
+        return true;
+    }
+
+    @Override
+    public boolean txProducer2(SampleScanAddDto scanDto) {
+        RmqScanUpdateBo bo = RmqScanUpdateBo.builder().name(scanDto.getName() + "--to update msg tx").scanType(scanDto.getScanType().getValue()).scanTime(scanDto.getScanTime()).build();
+
+        Message msg = new Message(flRmqProperties.getTopics().get("sample-tx-topic").getName(), flRmqProperties.getTopics().get("sample-tx-topic").getTags().get("tx-scan-update").getName(),
                 flCustomSerializer.serializeAsBytes(bo));
 
         try {
-            scanTxMQProducer.sendMessageInTransaction(msg, scanDto);
-            //事务性消息的sendResult不用处理
-        } catch (Exception e) {
-            //do nothing
+            TransactionSendResult sendResult = scanTxMQProducer.sendMessageInTransaction(msg, scanDto);//注意: 本地事务执行/事务回查时抛出的异常不会抛出来
+            if(sendResult.getSendStatus() != SendStatus.SEND_OK) { //处理SendResult，如果不是SEND_OK,返回false，表示执行失败(因为只有SEND_OK状态，本地事务才会执行)
+                return false;
+            }
+            if(sendResult.getLocalTransactionState() != LocalTransactionState.COMMIT_MESSAGE) {//本地事务如果执行失败，返回false
+                return false;
+            }
+        } catch (MQClientException e) { //如果发生异常，抛出异常，controller调用处捕获异常，返回给前端失败
+            log.error(e.getMessage());
+            throw new BizException(() -> e.getMessage());
         }
+        return true;
     }
-
 
 
     @Override
