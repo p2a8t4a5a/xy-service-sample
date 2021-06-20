@@ -93,16 +93,16 @@ public class SampleScanServiceImpl extends ServiceImpl<SampleScanMapper, SampleS
 
             //SendResult的处理
             //1、记录SendResult日志
-            //2、当前工作模式时SYNC_MASTER,则如果收到SEND_OK,可以认为(99.99%)消息成功存储到broker了，如果是其他状态，则应该手动写代码添加相关重试逻辑(异步)
+            //2、当前工作模式是SYNC_MASTER,ASYNC_FLUSH,则如果收到SEND_OK,可以认为(99.99%)消息成功存储到broker了，如果是其他状态，则应该手动写代码添加相关重试逻辑(异步)
             //3、如果对发送端数据一致性要求高，可以使用事务性消息
             log.info("sendResult, {}", sendResult);
             if(sendResult.getSendStatus() != SendStatus.SEND_OK) {
                 //retry
             }
-        } catch (Exception e) {
-            log.error("send error, {}", e.getMessage());
-            //如果发送抛出异常,则应该手动写代码添加相关重试逻辑(异步)，"发送端不回滚",考虑两种情况1:消息真的发送失败；2:消息发送假失败
+        } catch (Exception e) { //如果发生异常，此处没有办法判断消息是否发送了，发送成功了，还是发送失败了
+            //如果发送抛出异常,则应该手动写代码添加相关重试逻辑(异步)，"发送端不回滚"
             //如果对发送端数据一致性要求高，可以使用事务性消息
+            log.error("send error, {}", e.getMessage());
         }
     }
 
@@ -117,14 +117,20 @@ public class SampleScanServiceImpl extends ServiceImpl<SampleScanMapper, SampleS
         msg.putUserProperty(RmqConstants.DEFAULT_RMQ_TX_SERVICE_IMPL, "scanTmqTxService");
         ScanRmqTxModel model = ScanRmqTxModel.builder().name(scanDto.getName()).scanTime(scanDto.getScanTime()).scanType(scanDto.getScanType()).build();
         try {
-            TransactionSendResult sendResult = defaultTxMQProducer.sendMessageInTransaction(msg, model);//注意: 本地事务执行/事务回查时抛出的异常不会抛出来
-            if(sendResult.getSendStatus() != SendStatus.SEND_OK) { //处理SendResult，如果不是SEND_OK,返回false，表示执行失败(因为只有SEND_OK状态，本地事务才会执行)
+            //0.可能存在的问题: 返回SEND_OK,但是半消息还是失败了; 当前工作模式是SYNC_MASTER,ASYNC_FLUSH，除非master-slave整体挂掉才会丢失消息
+            TransactionSendResult sendResult = defaultTxMQProducer.sendMessageInTransaction(msg, model);
+            if(sendResult.getSendStatus() != SendStatus.SEND_OK) { //2、处理SendResult，如果不是SEND_OK,返回false，表示执行失败(因为只有SEND_OK状态，本地事务才会执行, 此时，半消息可能发送成功也可能发送失败(see 0.))
                 return false;
             }
-            if(sendResult.getLocalTransactionState() != LocalTransactionState.COMMIT_MESSAGE) {//本地事务如果执行失败，返回false
+            if(sendResult.getLocalTransactionState() != LocalTransactionState.COMMIT_MESSAGE) {//3、本地事务执行的异常不会抛出来，此处用tx-state返回值标记本地事务是否执行成功
+                                                                                                    //如果本地事务执行成功，返回COMMIT_MESSAGE
+                                                                                                    //如果本地事务执行失败，返回UNKNOW
                 return false;
             }
-        } catch (MQClientException e) { //如果发生异常，抛出异常，controller调用处捕获异常，返回给前端失败
+            //4、本地事务执行后，endTransaction执行，异常不会抛出来
+            //5、事务回查: 事务回查运行在线程池中，异常不会抛出来
+        } catch (MQClientException e) { //1、只有在发送半消息之前或者发送半消息时的异常才会抛出来，此时本地事务还未执行，半消息可能发送成功也可能发送失败，注意本地事务执行、事务执行之后的代码、事务回查的异常不会抛出来
+                                        //如果发生异常，controller调用处捕获异常，返回给前端失败
             log.error(e.getMessage());
             throw new BizException(() -> e.getMessage());
         }
@@ -139,8 +145,8 @@ public class SampleScanServiceImpl extends ServiceImpl<SampleScanMapper, SampleS
                 flCustomSerializer.serializeAsBytes(bo));
 
         try {
-            TransactionSendResult sendResult = scanTxMQProducer.sendMessageInTransaction(msg, scanDto);//注意: 本地事务执行/事务回查时抛出的异常不会抛出来
-            if(sendResult.getSendStatus() != SendStatus.SEND_OK) { //处理SendResult，如果不是SEND_OK,返回false，表示执行失败(因为只有SEND_OK状态，本地事务才会执行)
+            TransactionSendResult sendResult = scanTxMQProducer.sendMessageInTransaction(msg, scanDto);//注意: 本地事务执行、事务回查、发送半消息之后的异常不会抛出来
+            if(sendResult.getSendStatus() != SendStatus.SEND_OK) { //处理SendResult，如果不是SEND_OK,返回false，表示执行失败(因为只有SEND_OK状态，本地事务才会执行,并且非SEND_OK状态不能判断半消息成功还是失败)
                 return false;
             }
             if(sendResult.getLocalTransactionState() != LocalTransactionState.COMMIT_MESSAGE) {//本地事务如果执行失败，返回false
