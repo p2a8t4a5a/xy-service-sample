@@ -1,18 +1,15 @@
-package com.xy.sample.redis.controller;
+package com.xy.sample.controller.redis;
 
 
 import com.sc.common.vo.JsonResult;
-import com.xy.sample.config.FlRedissonProperties;
-import com.xy.sample.redis.dto.RedissonPojoDto;
-import com.xy.sample.redis.enums.PojoDtoEnum;
+import com.sc.common.redis.dto.RedissonPojoDto;
+import com.sc.common.redis.enums.PojoDtoEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.RedissonReactiveClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

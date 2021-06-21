@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sc.common.constant.RmqConstants;
 import com.sc.common.exception.BizException;
-import com.sc.common.redis.FlCustomSerializer;
+import com.sc.common.redis.config.FlCustomSerializer;
 import com.sc.common.rmq.bo.RmqScanUpdateBo;
 import com.sc.common.rmq.config.FlRmqProperties;
 import com.sc.common.vo.JsonResult;

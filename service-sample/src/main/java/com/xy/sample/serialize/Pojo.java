@@ -1,6 +1,6 @@
 package com.xy.sample.serialize;
 
-import com.xy.sample.redis.enums.PojoEnum;
+import com.sc.common.redis.enums.PojoEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

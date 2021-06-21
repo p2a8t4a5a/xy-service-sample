@@ -7,8 +7,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sc.common.utils.JacksonUtils;
 import com.sc.common.utils.ReflectUtils;
-import com.xy.sample.redis.enums.PojoAnoEnum;
-import com.xy.sample.redis.enums.PojoEnum;
+import com.sc.common.redis.enums.PojoAnoEnum;
+import com.sc.common.redis.enums.PojoEnum;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

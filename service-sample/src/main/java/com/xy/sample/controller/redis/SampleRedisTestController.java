@@ -1,13 +1,13 @@
-package com.xy.sample.redis.controller;
+package com.xy.sample.controller.redis;
 
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.sc.common.redis.FlCustomSerializer;
+import com.sc.common.redis.config.FlCustomSerializer;
 import com.sc.common.utils.ReflectUtils;
 import com.sc.common.vo.JsonResult;
-import com.xy.sample.redis.dto.Pojo2RedisDto;
-import com.xy.sample.redis.dto.SampleRedisTestDelDto;
-import com.xy.sample.redis.enums.PojoDtoEnum;
+import com.sc.common.redis.dto.Pojo2RedisDto;
+import com.sc.common.redis.dto.SampleRedisTestDelDto;
+import com.sc.common.redis.enums.PojoDtoEnum;
 import com.xy.sample.serialize.FlSerializeTest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

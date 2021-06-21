@@ -2,7 +2,7 @@ package com.xy.sample.rocketmq.listener;
 
 import com.sc.common.rmq.bo.RmqScanUpdateBo;
 import com.sc.common.enums.ScanTypeEnum;
-import com.sc.common.redis.FlCustomSerializer;
+import com.sc.common.redis.config.FlCustomSerializer;
 import com.sc.common.rmq.config.FlRmqConsumer;
 import com.xy.sample.entity.scan.SampleScan;
 import com.xy.sample.service.scan.SampleScanService;

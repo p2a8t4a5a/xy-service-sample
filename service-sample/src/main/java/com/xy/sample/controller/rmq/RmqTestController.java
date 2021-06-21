@@ -1,4 +1,4 @@
-package com.xy.sample.rocketmq.cotroller;
+package com.xy.sample.controller.rmq;
 
 import com.sc.common.vo.JsonResult;
 import com.xy.sample.dto.scan.SampleScanAddDto;
