@@ -16,8 +16,8 @@ spring:
         file-extension: yaml
         server-addr: 127.0.0.1:8848
         #server-addr: 192.168.0.50:8848,192.168.0.51:8848,192.168.0.52:8848
-        shared-data-ids: public-redisson-config.yaml,public-redis-config.yaml,public-mongodb-config.yaml,public-database-config.yaml,public-oss-config.yaml,public-es-config.yaml
-        refreshable-dataids: public-redisson-config.yaml,public-redis-config.yaml,public-mongodb-config.yaml,public-database-config.yaml,public-oss-config.yaml,public-es-config.yaml
+        shared-data-ids: public-database-config.yaml,public-redisson-config.yaml,public-redis-config.yaml,public-mongodb-config.yaml,public-oss-config.yaml,public-es-config.yaml
+        refreshable-dataids: public-database-config.yaml,public-redisson-config.yaml,public-redis-config.yaml,public-mongodb-config.yaml,public-oss-config.yaml,public-es-config.yaml
         ext-config:
           - dataId: ${spring.application.name}-extconfig.yaml
             refresh: true
