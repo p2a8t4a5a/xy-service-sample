@@ -1,4 +1,4 @@
-package com.xy.sample.config;
+package com.xy.sample.rocketmq;
 
 import com.sc.common.rmq.config.FlRmqProducer;
 
