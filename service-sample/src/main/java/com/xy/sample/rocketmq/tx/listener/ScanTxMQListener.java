@@ -2,11 +2,11 @@ package com.xy.sample.rocketmq.tx.listener;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.sc.common.entity.rmq.RmqTx;
+import com.sc.common.rmq.tx.entity.RmqTx;
 import com.sc.common.rmq.config.FlRmqTxProducer;
+import com.sc.common.rmq.tx.service.RmqTxService;
 import com.xy.sample.dto.scan.SampleScanAddDto;
 import com.xy.sample.entity.scan.SampleScan;
-import com.xy.sample.service.rmq.RmqTxService;
 import com.xy.sample.service.scan.SampleScanService;
 import org.apache.rocketmq.client.producer.LocalTransactionState;
 import org.apache.rocketmq.client.producer.TransactionListener;

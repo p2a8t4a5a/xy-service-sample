@@ -1,8 +1,8 @@
 package com.xy.sample.controller.rmq;
 
-import com.sc.common.entity.rmq.RmqTx;
+import com.sc.common.rmq.tx.entity.RmqTx;
+import com.sc.common.rmq.tx.service.RmqTxService;
 import com.sc.common.vo.JsonResult;
-import com.xy.sample.service.rmq.RmqTxService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

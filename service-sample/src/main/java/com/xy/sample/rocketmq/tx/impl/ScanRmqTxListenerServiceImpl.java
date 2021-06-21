@@ -2,11 +2,11 @@ package com.xy.sample.rocketmq.tx.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.sc.common.entity.rmq.RmqTx;
+import com.sc.common.rmq.tx.entity.RmqTx;
 import com.sc.common.rmq.tx.RmqTxListenerService;
+import com.sc.common.rmq.tx.service.RmqTxService;
 import com.xy.sample.entity.scan.SampleScan;
 import com.xy.sample.rocketmq.tx.model.ScanRmqTxModel;
-import com.xy.sample.service.rmq.RmqTxService;
 import com.xy.sample.service.scan.SampleScanService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
