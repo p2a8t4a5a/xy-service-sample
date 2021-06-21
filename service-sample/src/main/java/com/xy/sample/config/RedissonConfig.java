@@ -18,7 +18,7 @@ import java.io.IOException;
 public class RedissonConfig {
 
 
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     /*@RefreshScope*/
     public RedissonClient redissonClient(FlRedissonProperties properties) {
         Config config = null;
@@ -31,7 +31,7 @@ public class RedissonConfig {
         return Redisson.create(config);
     }
 
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     public RedissonReactiveClient redissonReactiveClient(FlRedissonProperties properties) {
         Config config = null;
         try {
