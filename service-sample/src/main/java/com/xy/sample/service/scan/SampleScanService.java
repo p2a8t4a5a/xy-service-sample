@@ -13,13 +13,11 @@ public interface SampleScanService extends IService<SampleScan> {
 
     void saveAndRpc(SampleScanAddDto scanAddDto);
 
-    void sampleTopicUpdate(SampleScanAddDto scanDto);
+    void send(SampleScanAddDto scanDto);
 
-    boolean txProducer(SampleScanAddDto scanDto);
+    void sendCus();
 
-    boolean txProducer2(SampleScanAddDto scanDto);
+    boolean txSend(SampleScanAddDto scanDto);
 
-    void other();
-
-
+    boolean txSendCus(SampleScanAddDto scanDto);
 }

@@ -1,6 +1,5 @@
 package com.xy.sample.rocketmq.cotroller;
 
-
 import com.sc.common.vo.JsonResult;
 import com.xy.sample.dto.scan.SampleScanAddDto;
 import com.xy.sample.service.scan.SampleScanService;
@@ -11,23 +10,45 @@ import javax.validation.Valid;
 
 @Slf4j
 @RestController
-@RequestMapping("rmq")
+@RequestMapping("rmqTest")
 public class RmqTestController {
 
     @Autowired
     private SampleScanService sampleScanService;
 
-    @PostMapping("sampleTopicUpdate")
-    public JsonResult sampleTopicUpdate(@RequestBody @Valid SampleScanAddDto scanDto) {
-        sampleScanService.sampleTopicUpdate(scanDto);
-        return JsonResult.buildSuccessResult("保存成功");
+
+    @PostMapping("send")
+    public JsonResult send(@RequestBody @Valid SampleScanAddDto scanDto) {
+        //使用默认 Producer发送
+        sampleScanService.send(scanDto);
+        return JsonResult.buildSuccessResult("send success");
+    }
+
+    @PostMapping("sendCus")
+    public JsonResult sendCus() {
+        //使用自定义 Producer发送
+        sampleScanService.sendCus();
+        return JsonResult.buildSuccessResult("sendCus success");
     }
 
 
-    @PostMapping("txProducer")
-    public JsonResult txProducer(@RequestBody @Valid SampleScanAddDto scanDto) {
+    @PostMapping("txSend")
+    public JsonResult txSend(@RequestBody @Valid SampleScanAddDto scanDto) {
+        //使用默认 tx Producer发送
         try {
-            boolean result = sampleScanService.txProducer(scanDto);
+            boolean result = sampleScanService.txSend(scanDto);
+            if(!result) return JsonResult.buildSuccessResult("txSend error");
+        } catch (Exception e) {
+            return JsonResult.buildSuccessResult("txSend error");
+        }
+        return JsonResult.buildSuccessResult("txSend success");
+    }
+
+    @PostMapping("txSendCus")
+    public JsonResult txSendCus(@RequestBody @Valid SampleScanAddDto scanDto) {
+        //使用自定义 tx Producer发送
+        try {
+            boolean result = sampleScanService.txSendCus(scanDto);
             if(!result) return JsonResult.buildSuccessResult("error");
         } catch (Exception e) {
             return JsonResult.buildSuccessResult("error");
@@ -35,22 +56,6 @@ public class RmqTestController {
         return JsonResult.buildSuccessResult("保存成功");
     }
 
-    @PostMapping("txProducer2")
-    public JsonResult txProducer2(@RequestBody @Valid SampleScanAddDto scanDto) {
-        try {
-            boolean result = sampleScanService.txProducer2(scanDto);
-            if(!result) return JsonResult.buildSuccessResult("error");
-        } catch (Exception e) {
-            return JsonResult.buildSuccessResult("error");
-        }
-        return JsonResult.buildSuccessResult("保存成功");
-    }
 
-
-    @GetMapping("other")
-    public JsonResult other() {
-        sampleScanService.other();
-        return JsonResult.buildSuccessResult("test成功");
-    }
 
 }
