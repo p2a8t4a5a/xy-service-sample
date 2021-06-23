@@ -41,6 +41,7 @@ public class ScanUpdateMessageListener implements MessageListenerConcurrently {
             log.error("consume message {} ,  error {}", list, e.getMessage());
             return ConsumeConcurrentlyStatus.RECONSUME_LATER;
         }
+        log.info("consume message {}, success", list);
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
 

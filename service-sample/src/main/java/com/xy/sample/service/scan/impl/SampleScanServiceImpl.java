@@ -86,7 +86,7 @@ public class SampleScanServiceImpl extends ServiceImpl<SampleScanMapper, SampleS
         SampleScan scan = SampleScan.builder().build().setName(scanDto.getName()).setScanType(scanDto.getScanType()).setScanTime(scanDto.getScanTime());
         this.save(scan);
 
-        RmqScanUpdateBo bo = RmqScanUpdateBo.builder().id(scan.getId()).name(scan.getName() + "--to update msg").scanType(scan.getScanType().getValue()).scanTime(scan.getScanTime()).build();
+        RmqScanUpdateBo bo = RmqScanUpdateBo.builder().id(scan.getId()).name(scan.getName() + "--to update msg by defaultMQProducer").scanType(scan.getScanType().getValue()).scanTime(scan.getScanTime()).build();
         Message msg = new Message(flRmqProperties.getTopics().get("sample-topic").getName(), flRmqProperties.getTopics().get("sample-topic").getTags().get("scan-update").getName(), scan.getId()+"",
                 flCustomSerializer.serializeAsBytes(bo));
         try {
@@ -116,7 +116,7 @@ public class SampleScanServiceImpl extends ServiceImpl<SampleScanMapper, SampleS
         Message msg = null;
         try {
             msg = new Message(flRmqProperties.getTopics().get("sample-topic").getName(), flRmqProperties.getTopics().get("sample-topic").getTags().get("other").getName(),
-                    "Hello otherMQProducer".getBytes(RemotingHelper.DEFAULT_CHARSET));
+                    "Hello selfDefinedMQProducer".getBytes(RemotingHelper.DEFAULT_CHARSET));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return ;
@@ -135,7 +135,7 @@ public class SampleScanServiceImpl extends ServiceImpl<SampleScanMapper, SampleS
 
     @Override
     public boolean txSend(SampleScanAddDto scanDto) {
-        RmqScanUpdateBo bo = RmqScanUpdateBo.builder().name(scanDto.getName() + "--to update msg tx").scanType(scanDto.getScanType().getValue()).scanTime(scanDto.getScanTime()).build();
+        RmqScanUpdateBo bo = RmqScanUpdateBo.builder().name(scanDto.getName() + "--to update msg tx by defaultTxMQProducer").scanType(scanDto.getScanType().getValue()).scanTime(scanDto.getScanTime()).build();
 
         Message msg = new Message(flRmqProperties.getTopics().get("sample-tx-topic").getName(), flRmqProperties.getTopics().get("sample-tx-topic").getTags().get("tx-scan-update").getName(),
                 flCustomSerializer.serializeAsBytes(bo));
@@ -166,7 +166,7 @@ public class SampleScanServiceImpl extends ServiceImpl<SampleScanMapper, SampleS
 
     @Override
     public boolean txSendCus(SampleScanAddDto scanDto) {
-        RmqScanUpdateBo bo = RmqScanUpdateBo.builder().name(scanDto.getName() + "--to update msg tx").scanType(scanDto.getScanType().getValue()).scanTime(scanDto.getScanTime()).build();
+        RmqScanUpdateBo bo = RmqScanUpdateBo.builder().name(scanDto.getName() + "--to update msg tx by selfDefinedMQProducer").scanType(scanDto.getScanType().getValue()).scanTime(scanDto.getScanTime()).build();
 
         Message msg = new Message(flRmqProperties.getTopics().get("sample-tx-topic").getName(), flRmqProperties.getTopics().get("sample-tx-topic").getTags().get("tx-scan-update").getName(),
                 flCustomSerializer.serializeAsBytes(bo));
