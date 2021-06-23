@@ -11,10 +11,10 @@ import org.springframework.retry.annotation.EnableRetry;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan({"com.xy", "com.sc"})
+@ComponentScan({"com.xy.sample", "com.sc.common", "com.xy.sample2.api"})
 @EnableCircuitBreaker
 @EnableHystrixDashboard
-@EnableFeignClients("com.xy")
+@EnableFeignClients({"com.xy.sample2.api"})
 @EnableRetry
 public class SampleApplication {
 
