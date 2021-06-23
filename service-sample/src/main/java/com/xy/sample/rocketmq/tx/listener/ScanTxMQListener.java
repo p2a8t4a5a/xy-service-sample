@@ -35,7 +35,7 @@ public class ScanTxMQListener implements TransactionListener {
         SampleScan scan = SampleScan.builder().name(dto.getName()).scanType(dto.getScanType()).scanTime(dto.getScanTime()).build();
         sampleScanService.save(scan);
         //int i=1/0;
-        RmqTx rmqTx = RmqTx.builder().txId(message.getTransactionId()).checkStatus(0).build();
+        RmqTx rmqTx = RmqTx.builder().txId(message.getTransactionId()).status(0).build();
         rmqTxService.save(rmqTx);
 
         return LocalTransactionState.COMMIT_MESSAGE;
@@ -48,7 +48,7 @@ public class ScanTxMQListener implements TransactionListener {
             RmqTx rmqTx = rmqTxService.getOne(new LambdaQueryWrapper<RmqTx>().select(RmqTx::getId).eq(RmqTx::getTxId, txId));
             if(rmqTx != null) {
                 try {
-                    rmqTxService.update(new LambdaUpdateWrapper<RmqTx>().set(RmqTx::getCheckStatus, 1).eq(RmqTx::getId, rmqTx.getId()));
+                    rmqTxService.update(new LambdaUpdateWrapper<RmqTx>().set(RmqTx::getStatus, 1).eq(RmqTx::getId, rmqTx.getId()));
                 } catch (Exception e) {
                     log.warn("事务回查时更新check_status失败, txId={}", txId);
                 }

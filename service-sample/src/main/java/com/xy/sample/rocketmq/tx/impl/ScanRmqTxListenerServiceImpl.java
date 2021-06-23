@@ -2,6 +2,7 @@ package com.xy.sample.rocketmq.tx.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.sc.common.enums.BizTypeEnum;
 import com.sc.common.rmq.tx.entity.RmqTx;
 import com.sc.common.rmq.tx.RmqTxListenerService;
 import com.sc.common.rmq.tx.service.RmqTxService;
@@ -29,7 +30,7 @@ public class ScanRmqTxListenerServiceImpl implements RmqTxListenerService<ScanRm
         SampleScan scan = SampleScan.builder().name(model.getName()).scanType(model.getScanType()).scanTime(model.getScanTime()).build();
         sampleScanService.save(scan);
         //int i = 1/0;
-        RmqTx rmqTx = RmqTx.builder().txId(model.getTxId()).checkStatus(0).build();
+        RmqTx rmqTx = RmqTx.builder().bizType(BizTypeEnum.SAMPLE_SCAN).bizId(scan.getId()).txId(model.getTxId()).status(0).build();
         rmqTxService.save(rmqTx);
         /*try {//本地事务阻塞后，check可能先执行,TODO
             Thread.sleep(20000);
@@ -45,7 +46,7 @@ public class ScanRmqTxListenerServiceImpl implements RmqTxListenerService<ScanRm
             RmqTx rmqTx = rmqTxService.getOne(new LambdaQueryWrapper<RmqTx>().select(RmqTx::getId).eq(RmqTx::getTxId, txId));
             if(rmqTx != null) {
                 try {
-                    rmqTxService.update(new LambdaUpdateWrapper<RmqTx>().set(RmqTx::getCheckStatus, 1).eq(RmqTx::getId, rmqTx.getId()));
+                    rmqTxService.update(new LambdaUpdateWrapper<RmqTx>().set(RmqTx::getStatus, 1).eq(RmqTx::getId, rmqTx.getId()));
                 } catch (Exception e) {
                     log.warn("事务回查时更新check_status失败, txId={}", txId);
                 }

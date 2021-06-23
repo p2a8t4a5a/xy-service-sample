@@ -3,6 +3,7 @@ package com.xy.sample.service.scan.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sc.common.constant.RmqConstants;
+import com.sc.common.enums.BizTypeEnum;
 import com.sc.common.exception.BizException;
 import com.sc.common.redis.config.FlCustomSerializer;
 import com.sc.common.rmq.bo.RmqScanUpdateBo;
