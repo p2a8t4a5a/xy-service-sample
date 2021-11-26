@@ -21,9 +21,9 @@
     </properties>
 
     <!-- 定义profiles
-       1、父pom中默认定义了profiles，此pom中可以选择通过命令激活父pom的profile,eg: mvn clean package -Pdev (则线上时mvn的打包命令需要额外加参数)
-          note: 子pom中定义和父pom相同的profile然后通过activeByDefault激活是不行的
-       2、或者直接在此pom中定义profile(这样即可方便的在此pom中指定激活哪一个profile),如下:
+       1、父profile和子profile同时存在，父profile在子pom中不可见，但父profile可以在子pom中激活
+            1)、父profile中配置activeByDefault; 2)、子pom中执行命令，mvn clean package -Pdev
+       2、profile的搜索规则: 从子开始搜索，则子profile定义了相同id，将优先查找到子profile
       -->
     <profiles>
         <profile>
