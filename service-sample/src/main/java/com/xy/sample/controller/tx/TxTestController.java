@@ -3,7 +3,7 @@ package com.xy.sample.controller.tx;
 import com.sc.common.vo.JsonResult;
 import com.xy.sample.dto.scan.SampleScanAddDto;
 import com.xy.sample.entity.scan.SampleScan;
-import com.xy.sample.service.scan.TxTextService1;
+import com.xy.sample.service.tx.TxTextService1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

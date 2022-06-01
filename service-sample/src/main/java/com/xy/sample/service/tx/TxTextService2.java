@@ -1,4 +1,4 @@
-package com.xy.sample.service.scan;
+package com.xy.sample.service.tx;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xy.sample.entity.scan.SampleScan;

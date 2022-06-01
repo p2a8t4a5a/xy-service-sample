@@ -1,11 +1,11 @@
-package com.xy.sample.service.scan.impl;
+package com.xy.sample.service.tx.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sc.common.utils.FlApplicationContextCatch;
 import com.xy.sample.entity.scan.SampleScan;
 import com.xy.sample.mapper.scan.SampleScanMapper;
-import com.xy.sample.service.scan.TxTextService1;
-import com.xy.sample.service.scan.TxTextService2;
+import com.xy.sample.service.tx.TxTextService1;
+import com.xy.sample.service.tx.TxTextService2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
