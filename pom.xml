@@ -9,14 +9,13 @@
     </modules>
 
     <parent>
-        <groupId>com.xy</groupId>
-        <artifactId>xy-common-dependencies</artifactId>
+        <groupId>com.fresh</groupId>
+        <artifactId>fresh-common-dependencies</artifactId>
         <version>1.0.0</version>
-        <relativePath/>
+        <!--<relativePath/>-->
     </parent>
-
+    <groupId>com.fresh.xy</groupId>
     <artifactId>xy-service-sample</artifactId>
-    <!-- 当前版本号1.0.0，如果1.0.0稳定后，继续开发1.0.1，则将版本号改成1.0.1 -->
     <version>1.0.0</version>
     <packaging>pom</packaging>
     <name>xy-service-sample</name>
@@ -29,9 +28,16 @@
     <properties>
         <!--当xy-common版本号变更时，此处也发生变更 -->
         <xy-common.version>1.0.0</xy-common.version>
+        <!-- 当版本好变更时，此处也发生变更 -->
+        <xy-mybatisplus-starter.version>1.0.0</xy-mybatisplus-starter.version>
+        <xy-redis-starter.version>1.0.0</xy-redis-starter.version>
+        <xy-rmq-starter.version>1.0.0</xy-rmq-starter.version>
+
+        <!-- 当前版本号1.0.0，如果1.0.0稳定后，继续开发1.0.1，则将版本号改成1.0.1 -->
         <service-sample-api.version>1.0.0</service-sample-api.version>
         <service-sample.version>1.0.0</service-sample.version>
 
+        <!-- 当版本好变更时，此处也发生变更 -->
         <service-sample2-api.version>1.0.0</service-sample2-api.version>
     </properties>
 
@@ -39,19 +45,38 @@
         <dependencies>
             <!-- xy-common -->
             <dependency>
-                <groupId>com.xy</groupId>
+                <groupId>com.fresh.xy</groupId>
                 <artifactId>xy-common</artifactId>
                 <version>${xy-common.version}</version>
             </dependency>
+            <!-- mybatisplus-starter -->
+            <dependency>
+                <groupId>com.fresh.xy</groupId>
+                <artifactId>xy-mybatisplus-starter</artifactId>
+                <version>${xy-mybatisplus-starter.version}</version>
+            </dependency>
+            <!-- redis-starter -->
+            <dependency>
+                <groupId>com.fresh.xy</groupId>
+                <artifactId>xy-redis-starter</artifactId>
+                <version>${xy-redis-starter.version}</version>
+            </dependency>
+            <!-- rmq-starter -->
+            <dependency>
+                <groupId>com.fresh.xy</groupId>
+                <artifactId>xy-rmq-starter</artifactId>
+                <version>${xy-rmq-starter.version}</version>
+            </dependency>
+
             <!-- service-sample-api -->
             <dependency>
-                <groupId>com.xy</groupId>
+                <groupId>com.fresh.xy</groupId>
                 <artifactId>service-sample-api</artifactId>
                 <version>${service-sample-api.version}</version>
             </dependency>
             <!-- service-sample2.api -->
             <dependency>
-                <groupId>com.xy</groupId>
+                <groupId>com.fresh.xy</groupId>
                 <artifactId>service-sample2-api</artifactId>
                 <version>${service-sample2-api.version}</version>
             </dependency>

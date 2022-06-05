@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.xy</groupId>
+        <groupId>com.fresh.xy</groupId>
         <artifactId>xy-service-sample</artifactId>
         <version>1.0.0</version>
     </parent>
 
-    <groupId>com.xy</groupId>
+    <groupId>com.fresh.xy</groupId>
     <artifactId>service-sample-api</artifactId>
     <version>${service-sample-api.version}</version>
     <packaging>jar</packaging>
@@ -23,9 +23,10 @@
     <dependencies>
         <!-- xy-common -->
         <dependency>
-            <groupId>com.xy</groupId>
+            <groupId>com.fresh.xy</groupId>
             <artifactId>xy-common</artifactId>
         </dependency>
+
         <!-- open feign -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
