@@ -53,7 +53,7 @@ public class FlHystrixCommandSample {
             //信号量: 在调用者线程中执行,信号量定义了一个数值表示最大资源数: execution.isolation.semaphore.maxConcurrentRequests
             //       优点: 最大资源数不受限制; 缺点: HystrixCommand在调用者线程中同步执行
             @HystrixProperty(name = "execution.isolation.strategy", value = "THREAD"),
-            //if so, Hystrix marks the HystrixCommand as a TIMEOUT, and performs com.fresh.xy.sample2.api.fallback logic
+            //if so, Hystrix marks the HystrixCommand as a TIMEOUT, and performs fallback logic
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000"),
 
             //设置最小请求数量，当在一个滚动的窗口中失败数量>=该值时，打开断路器开关
@@ -69,9 +69,9 @@ public class FlHystrixCommandSample {
             //?
             //@HystrixProperty(name = "metrics.rollingPercentile.timeInMilliseconds", value = "6000"),
 
-            //设置允许fallback的调用者线程的数量,es: 线程池/信号量=10, 调用者线程=100, com.fresh.xy.sample2.api.fallback limit=20
+            //设置允许fallback的调用者线程的数量,es: 线程池/信号量=10, 调用者线程=100, fallback limit=20
                 //                             10个调用者线程执行, 剩下的90个调用者线程中20个fallback，70个抛异常
-            @HystrixProperty(name = "com.fresh.xy.sample2.api.fallback.isolation.semaphore.maxConcurrentRequests", value = "10")
+            @HystrixProperty(name = "fallback.isolation.semaphore.maxConcurrentRequests", value = "10")
     },  threadPoolProperties = {
             @HystrixProperty(name = "coreSize", value = "10"),
             //@HystrixProperty(name = "allowMaximumSizeToDivergeFromCoreSize", value = "true"),
