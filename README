@@ -1,0 +1,32 @@
+fresh桶的xy项目的service-sample服务的父pom
+com.fresh.xy:xy-service-sample
+
+
+本地: 单独对service-sample-api打包到本地仓库
+     service-sample: build,run/debug，安不安装到本地仓库都可(它不被其他项目依赖)
+                     如果要打包，可以单独对service-sample打包(-am参数)
+                               或者pom打包将所有子module打包
+
+线上: 单独对service-sample-api打包到远端仓库
+     service-sample: 使用maven打包后运行，安不安装到远端仓库都可(它不被其他项目依赖)
+                     打包时，可以单独对service-sample打包(-am参数)
+                            或者pom打包将所有子module打包
+
+子module之间不应形成相互依赖
+
+service-sample-api单独打包时加-am参数
+
+
+关于相互依赖:
+    service-sample  依赖 xy-service-sample2的 service-sample2-api
+    service-sample2 依赖 xy-service-sample的  service-sample-api
+ 打包注意: 需要单独对service-sample-api，service-sample2-api打包(-am参数)到仓库
+
+解决相互依赖:
+    将service-sample2-api，service-sample-api抽成公共项目，放在fresh-xy-starter或者独立出来
+    实际上意义不大: 还是要将service-sample2-api，service-sample-api打包到仓库，只不过是既可以单独打包也可以外层pom打包
+
+
+
+
+
