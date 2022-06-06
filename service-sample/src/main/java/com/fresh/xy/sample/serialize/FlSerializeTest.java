@@ -7,8 +7,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fresh.common.utils.JacksonUtils;
 import com.fresh.common.utils.ReflectUtils;
-import com.fresh.xy.redis.enums.PojoAnoEnum;
-import com.fresh.xy.redis.enums.PojoEnum;
+import com.fresh.xy.redis.enums.ForRedisTestPojoAnoEnum;
+import com.fresh.xy.redis.enums.ForRedisTestPojoEnum;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -180,26 +180,26 @@ public class FlSerializeTest {
         /**
          * Enum类型(没有加@JsonFormat,@JsonCreator)，使用EnumSerializer序列化器，PojoEnum.SYSTEM--->"\"SYSTEM\""
          */
-        String pojoEnumSe = om.writeValueAsString(PojoEnum.SYSTEM);
+        String pojoEnumSe = om.writeValueAsString(ForRedisTestPojoEnum.SYSTEM);
         //UntypedObjectDeserializer，enumObj实际类型为String, "SYSTEM"
         Object pojoEnumObj = om.readValue(pojoEnumSe, Object.class);
         /**
          * EnumDeserializer反序列化器，"SYSTEM"--->PojoEnum.SYSTEM
          */
-        PojoEnum pojoEnumVal = om.readValue(pojoEnumSe, PojoEnum.class);
+        ForRedisTestPojoEnum pojoEnumVal = om.readValue(pojoEnumSe, ForRedisTestPojoEnum.class);
 
         /**
          * Enum with @JsonFormat、@JsonCreator，使用BeanSerializer序列化器
          * "{"value":"SYSTEM","text":"系统"}"
          */
-        String pojoAnoEnumSe = om.writeValueAsString(PojoAnoEnum.SYSTEM);
+        String pojoAnoEnumSe = om.writeValueAsString(ForRedisTestPojoAnoEnum.SYSTEM);
         //UntypedObjectDeserializer，enumObj实际类型为LinkedHashMap
         Object pojoAnoEnumObj = om.readValue(pojoAnoEnumSe, Object.class);
         /**
          * FactoryBasedEnumDeserializer反序列化器
          * "{"value":"SYSTEM","text":"系统"}"这个字符串没有对应的Enum实例，返回null
          */
-        PojoAnoEnum pojoAnoEnumVal = om.readValue(pojoAnoEnumSe, PojoAnoEnum.class);
+        ForRedisTestPojoAnoEnum pojoAnoEnumVal = om.readValue(pojoAnoEnumSe, ForRedisTestPojoAnoEnum.class);
 
 
         List<String> list = new ArrayList<>();
@@ -222,11 +222,11 @@ public class FlSerializeTest {
 
         Date dt = new Date(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
         //Date未使用@JsonFormat,Enum未使用@JsonFormat,@JsonCreator
-        Pojo pojo = Pojo.builder()
+        ForSerializeTestPojo pojo = ForSerializeTestPojo.builder()
                 .id(1L)              //NumberSerializers$LongSerializer序列化器     NumberDeserializers$LongDeserializer反序列化器
                 .bl(true)            //BooleanSerializer序列化器                    NumberDeserializers$BooleanDeserializer反序列化器
                 .name("someiii阿迪斯")  //StringSerializer序列化器                    StringDeserializer反序列化器
-                .pojoEnum(PojoEnum.SYSTEM)  //EnumSerializer序列化器                 EnumDeserializer反序列化器
+                .pojoEnum(ForRedisTestPojoEnum.SYSTEM)  //EnumSerializer序列化器     EnumDeserializer反序列化器
                 .pojoTime(date)          //使用注册的LocalDateTimeSerializer序列化器   LocalDateTimeDeserializer反序列化器
                 .bi(bi)                //使用NumberSerializer序列化器                 NumberDeserializers$BigIntegerDeserializer反序列化器
                 .bd(bd)              //使用NumberSerializer序列化器                   NumberDeserializers$BigIntegerDeserializer反序列化器
@@ -243,15 +243,15 @@ public class FlSerializeTest {
          * BeanDeserializer反序列化器，Pojo对象
          * Pojo(bl=true, id=1, name=someiii阿迪斯, pojoEnum=SYSTEM, pojoTime=2021-05-17T00:56:24, bi=771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121, bd=8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423, dt=Mon May 17 00:56:24 CST 2021)
          */
-        Pojo pojoVal = om.readValue(pojoSe, Pojo.class);
+        ForSerializeTestPojo pojoVal = om.readValue(pojoSe, ForSerializeTestPojo.class);
 
 
         //Date使用@JsonFromat，Enum使用@JsonFormat，@JsonCreator
-        PojoAno pojoAno = PojoAno.builder()
+        ForSerializeTestPojoAno pojoAno = ForSerializeTestPojoAno.builder()
                 .id(1L)                             //NumberSerializers$LongSerializer序列化器          NumberDeserializers$LongDeserializer反序列化器
                 .bl(false)                          //BooleanSerializer序列化器                         NumberDeserializers$BooleanDeserializer反序列化器
                 .name("someiii阿迪斯")               //StringSerializer序列化器                          StringDeserializer反序列化器
-                .pojoAnoEnum(PojoAnoEnum.SYSTEM.getValue()) //StringSerializer序列化器                  StringDeserializer反序列化器
+                .pojoAnoEnum(ForRedisTestPojoAnoEnum.SYSTEM.getValue()) //StringSerializer序列化器      StringDeserializer反序列化器
                 .pojoTime(date)                     //注册的LocalDateTimeSerializer序列化器              LocalDateTimeDeserializer反序列化器
                 .bi(bi)                             //NumberSerializer序列化器                          NumberDeserializers$BigIntegerDeserializer反序列化器
                 .bd(bd)                             //NumberSerializer序列化器                          NumberDeserializers$BigIntegerDeserializer反序列化器
@@ -268,7 +268,7 @@ public class FlSerializeTest {
          * BeanDeserializer反序列化器，PojoAno对象
          * PojoAno(bl=false, id=1, name=someiii阿迪斯, pojoAnoEnum=SYSTEM, pojoAnoEnumValue=null, pojoTime=2021-05-17T01:06:56, bi=771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121, bd=8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423, dt=Mon May 17 01:06:56 CST 2021)
          */
-        PojoAno pojoAnoVal = om.readValue(pojoAnoSe, PojoAno.class);
+        ForSerializeTestPojoAno pojoAnoVal = om.readValue(pojoAnoSe, ForSerializeTestPojoAno.class);
 
         Map<String, Object> pojoMap = ReflectUtils.bean2Map(pojoAnoVal);
 
@@ -450,7 +450,7 @@ public class FlSerializeTest {
         /**
          * Enum类型(没有加@JsonFormat,@JsonCreator)，使用EnumSerializer序列化器，PojoEnum.SYSTEM--->"\"SYSTEM\""
          */
-        String pojoEnumSe = om.writeValueAsString(PojoEnum.SYSTEM);
+        String pojoEnumSe = om.writeValueAsString(ForRedisTestPojoEnum.SYSTEM);
         /**
          * TypeWrappedDeserializer->UntypedObjectDeserializer
          * enumObj实际类型为String, "SYSTEM"
@@ -459,14 +459,14 @@ public class FlSerializeTest {
         /**
          * EnumDeserializer反序列化器，"SYSTEM"--->PojoEnum.SYSTEM
          */
-        PojoEnum pojoEnumVal = om.readValue(pojoEnumSe, PojoEnum.class);
+        ForRedisTestPojoEnum pojoEnumVal = om.readValue(pojoEnumSe, ForRedisTestPojoEnum.class);
 
 
         /**
          * Enum with @JsonFormat、@JsonCreator，使用BeanSerializer序列化器
          * "{"value":"SYSTEM","text":"系统"}"
          */
-        String pojoAnoEnumSe = om.writeValueAsString(PojoAnoEnum.SYSTEM);
+        String pojoAnoEnumSe = om.writeValueAsString(ForRedisTestPojoAnoEnum.SYSTEM);
         /**
          * TypeWrappedDeserializer->UntypedObjectDeserializer->AsArrayTypeDeserializer
          * 判定"{"value":"SYSTEM","text":"系统"}"字符串没有类型信息而报错
@@ -477,7 +477,7 @@ public class FlSerializeTest {
          * FactoryBasedEnumDeserializer反序列化器
          * "{"value":"SYSTEM","text":"系统"}"这个字符串没有对应的Enum实例，返回null
          */
-        PojoAnoEnum pojoAnoEnumVal = om.readValue(pojoAnoEnumSe, PojoAnoEnum.class);
+        ForRedisTestPojoAnoEnum pojoAnoEnumVal = om.readValue(pojoAnoEnumSe, ForRedisTestPojoAnoEnum.class);
 
 
         List<String> list = new ArrayList<>();
@@ -500,11 +500,11 @@ public class FlSerializeTest {
 
         Date dt = new Date(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
         //Date未使用@JsonFormat,Enum未使用@JsonFormat,@JsonCreator
-        Pojo pojo = Pojo.builder()
+        ForSerializeTestPojo pojo = ForSerializeTestPojo.builder()
                 .id(1L)              //NumberSerializers$LongSerializer序列化器     NumberDeserializers$LongDeserializer反序列化器
                 .bl(true)            //BooleanSerializer序列化器                    NumberDeserializers$BooleanDeserializer反序列化器
                 .name("someiii阿迪斯")  //StringSerializer序列化器                    StringDeserializer反序列化器
-                .pojoEnum(PojoEnum.SYSTEM)  //EnumSerializer序列化器                 EnumDeserializer反序列化器
+                .pojoEnum(ForRedisTestPojoEnum.SYSTEM)  //EnumSerializer序列化器     EnumDeserializer反序列化器
                 .pojoTime(date)          //使用注册的LocalDateTimeSerializer序列化器   LocalDateTimeDeserializer反序列化器
                 .bi(bi)                //使用NumberSerializer序列化器                 NumberDeserializers$BigIntegerDeserializer反序列化器/...
                 .bd(bd)              //使用NumberSerializer序列化器                   NumberDeserializers$BigIntegerDeserializer反序列化器/...
@@ -524,15 +524,15 @@ public class FlSerializeTest {
          * TypeWrappedDeserializer->AsArrayTypeDeserializer->BeanDeserializer...
          * Pojo
          */
-        Pojo pojoVal = om.readValue(pojoSe, Pojo.class);
+        ForSerializeTestPojo pojoVal = om.readValue(pojoSe, ForSerializeTestPojo.class);
 
 
         //Date使用@JsonFromat，Enum使用@JsonFormat，@JsonCreator
-        PojoAno pojoAno = PojoAno.builder()
+        ForSerializeTestPojoAno pojoAno = ForSerializeTestPojoAno.builder()
                 .id(1L)                             //NumberSerializers$LongSerializer序列化器          NumberDeserializers$LongDeserializer反序列化器
                 .bl(false)                          //BooleanSerializer序列化器                         NumberDeserializers$BooleanDeserializer反序列化器
                 .name("someiii阿迪斯")               //StringSerializer序列化器                          StringDeserializer反序列化器
-                .pojoAnoEnum(PojoAnoEnum.SYSTEM.getValue()) //StringSerializer序列化器                  StringDeserializer反序列化器
+                .pojoAnoEnum(ForRedisTestPojoAnoEnum.SYSTEM.getValue()) //StringSerializer序列化器      StringDeserializer反序列化器
                 .pojoTime(date)                     //注册的LocalDateTimeSerializer序列化器              LocalDateTimeDeserializer反序列化器
                 .bi(bi)                             //NumberSerializer序列化器                          NumberDeserializers$BigIntegerDeserializer反序列化器/...
                 .bd(bd)                             //NumberSerializer序列化器                          NumberDeserializers$BigIntegerDeserializer反序列化器/...
@@ -552,7 +552,7 @@ public class FlSerializeTest {
          * TypeWrappedDeserializer->AsArrayTypeDeserializer->BeanDeserializer...
          * PojoAno
          */
-        PojoAno pojoAnoVal = om.readValue(pojoAnoSe, PojoAno.class);
+        ForSerializeTestPojoAno pojoAnoVal = om.readValue(pojoAnoSe, ForSerializeTestPojoAno.class);
 
 
         System.out.println("redis");

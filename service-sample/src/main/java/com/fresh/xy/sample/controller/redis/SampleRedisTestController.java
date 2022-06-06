@@ -5,9 +5,9 @@ import com.fresh.common.exception.BizException;
 import com.fresh.common.result.JsonResult;
 import com.fresh.common.utils.ReflectUtils;
 import com.fresh.xy.redis.config.FlCustomSerializer;
-import com.fresh.xy.redis.dto.Pojo2RedisDto;
-import com.fresh.xy.redis.dto.SampleRedisTestDelDto;
-import com.fresh.xy.redis.enums.PojoDtoEnum;
+import com.fresh.xy.redis.dto.ForTestPojo2RedisDto;
+import com.fresh.xy.redis.dto.ForRedisTestDelDto;
+import com.fresh.xy.redis.enums.ForRedisTestPojoDtoEnum;
 import com.fresh.xy.sample.serialize.FlSerializeTest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
@@ -124,9 +124,9 @@ public class SampleRedisTestController {
         BigDecimal bdVal = flCustomSerializer.deserialize(bigDecimalString, BigDecimal.class);//反序列化为BigDecimal
 
 
-        customRedisTemplate.opsForValue().set("Enum", flCustomSerializer.serialize(PojoDtoEnum.SYSTEM.getValue()));//将Enum的value字段(String类型)序列化为 "\"SYSTEM\"", redis保存为 "Enum"->"\"SYSTEM\""
+        customRedisTemplate.opsForValue().set("Enum", flCustomSerializer.serialize(ForRedisTestPojoDtoEnum.SYSTEM.getValue()));//将Enum的value字段(String类型)序列化为 "\"SYSTEM\"", redis保存为 "Enum"->"\"SYSTEM\""
         String enumString = customRedisTemplate.opsForValue().get("Enum");//从redis取出，保存为 "\"SYSTEM\""
-        PojoDtoEnum enumVal = PojoDtoEnum.getByValue(flCustomSerializer.deserialize(enumString, String.class));//反序列化并使用该String构造Enum
+        ForRedisTestPojoDtoEnum enumVal = ForRedisTestPojoDtoEnum.getByValue(flCustomSerializer.deserialize(enumString, String.class));//反序列化并使用该String构造Enum
 
 
         customRedisTemplate.opsForValue().set("LocalDateTime", flCustomSerializer.serialize(LocalDateTime.now()));//序列化为 "\"2021-05-16 22:05:41\"", redis保存为 "LocalDateTime"->"\"2021-05-16 22:05:41\""
@@ -153,7 +153,7 @@ public class SampleRedisTestController {
         //      5) "4123123122"
         customRedisTemplate.delete("list-value");
         customRedisTemplate.opsForList().leftPushAll("list-value", flCustomSerializer.serialize(4123123122L),
-                flCustomSerializer.serialize("中"), flCustomSerializer.serialize(bd), flCustomSerializer.serialize(PojoDtoEnum.SYSTEM.getValue()),
+                flCustomSerializer.serialize("中"), flCustomSerializer.serialize(bd), flCustomSerializer.serialize(ForRedisTestPojoDtoEnum.SYSTEM.getValue()),
                 flCustomSerializer.serialize(LocalDateTime.now()));
         Long length = customRedisTemplate.opsForList().size("list-value");
         //从redis取出，保存为List<String>: "\"2021-05-16 14:03:19\"", "\"SYSTEM\"", "[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]", "\"中\"", "4123123122"
@@ -170,7 +170,7 @@ public class SampleRedisTestController {
         //       "key3"->"[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]",
         //       "key4"->"\"\xe4\xb8\xad\"",
         //       "key1"->"\"SYSTEM\""
-        customRedisTemplate.opsForHash().put("hash-value", "key1", flCustomSerializer.serialize(PojoDtoEnum.SYSTEM.getValue()));
+        customRedisTemplate.opsForHash().put("hash-value", "key1", flCustomSerializer.serialize(ForRedisTestPojoDtoEnum.SYSTEM.getValue()));
         customRedisTemplate.opsForHash().put("hash-value", "key2", flCustomSerializer.serialize(LocalDateTime.now()));
         customRedisTemplate.opsForHash().put("hash-value", "key3", flCustomSerializer.serialize(bd));
         customRedisTemplate.opsForHash().put("hash-value", "key4", flCustomSerializer.serialize("中"));
@@ -192,14 +192,14 @@ public class SampleRedisTestController {
         Long hashKey5Val = flCustomSerializer.deserialize(hashKey5, Long.class);//反序列化为 Long
 
 
-        Pojo2RedisDto pojo2RedisDto = Pojo2RedisDto.builder()
+        ForTestPojo2RedisDto pojo2RedisDto = ForTestPojo2RedisDto.builder()
                 .id(1234534535354L)
                 .bl(false)
                 .s(null)
                 .name("just pojo哒哒哒")
                 .bi(bi)
                 .bd(bd)
-                .pojoType(PojoDtoEnum.SYSTEM.getValue())
+                .pojoType(ForRedisTestPojoDtoEnum.SYSTEM.getValue())
                 .pojoTime(LocalDateTime.now())
                 .build();
         //1.序列化Pojo
@@ -212,7 +212,7 @@ public class SampleRedisTestController {
         //"["com.sc.sample.redis.dto.Pojo2RedisDto",{"id":1234534535354,"bl":false,"s":null,"name":"just pojo哒哒哒","bi":["java.math.BigInteger",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121],"bd":["java.math.BigDecimal",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423],"pojoType":"SYSTEM","pojoTime":"2021-05-17 22:30:39"}]"
         String result = customRedisTemplate.opsForValue().get("Pojo");
         //4.反序列化为Pojo
-        Pojo2RedisDto pojoDe = flCustomSerializer.deserialize(result, Pojo2RedisDto.class);
+        ForTestPojo2RedisDto pojoDe = flCustomSerializer.deserialize(result, ForTestPojo2RedisDto.class);
 
 
         return JsonResult.buildSuccessResult(pojoDe);
@@ -284,7 +284,7 @@ public class SampleRedisTestController {
         Object bigDecimalObject = redisTemplate.opsForValue().get("BigDecimal");//从redis取出反序列化，实际类型是 BigDecimal
 
 
-        redisTemplate.opsForValue().set("Enum", PojoDtoEnum.SYSTEM.getValue());//Enum的value字段(String类型)序列化为 "\"SYSTEM\"" 的byte[], redis保存为 "Enum"->"\"SYSTEM\""
+        redisTemplate.opsForValue().set("Enum", ForRedisTestPojoDtoEnum.SYSTEM.getValue());//Enum的value字段(String类型)序列化为 "\"SYSTEM\"" 的byte[], redis保存为 "Enum"->"\"SYSTEM\""
         Object enumStringObject = redisTemplate.opsForValue().get("Enum");//从redis取出反序列化，实际类型是 String: "SYSTEM"
 
         redisTemplate.opsForValue().set("LocalDateTime", LocalDateTime.now());//ObjectMapper将此LocalDateTime序列化成 "\"2021-05-17 18:03:44\"" 的byte[], redis保存为 "LocalDateTime"->"\"2021-05-17 18:03:44\""
@@ -308,7 +308,7 @@ public class SampleRedisTestController {
         //      4) "\"\xe4\xb8\xad\""
         //      5) "4123123122"
         redisTemplate.delete("list-value");
-        redisTemplate.opsForList().leftPushAll("list-value", 4123123122L, "中", bd, PojoDtoEnum.SYSTEM.getValue(), LocalDateTime.now());
+        redisTemplate.opsForList().leftPushAll("list-value", 4123123122L, "中", bd, ForRedisTestPojoDtoEnum.SYSTEM.getValue(), LocalDateTime.now());
         Long length = redisTemplate.opsForList().size("list-value");
         //从redis取出反序列化，list中实际类型依次是 String,String,BigDecimal,String,Long
         List<Object> listValues = redisTemplate.opsForList().range("list-value", 0, length);
@@ -323,7 +323,7 @@ public class SampleRedisTestController {
         //       "key3"->"[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]",
         //       "key4"->"\"\xe4\xb8\xad\"",
         //       "key1"->"\"SYSTEM\""
-        redisTemplate.opsForHash().put("hash-value", "key1", PojoDtoEnum.SYSTEM.getValue());
+        redisTemplate.opsForHash().put("hash-value", "key1", ForRedisTestPojoDtoEnum.SYSTEM.getValue());
         redisTemplate.opsForHash().put("hash-value", "key2", LocalDateTime.now());
         redisTemplate.opsForHash().put("hash-value", "key3", bd);
         redisTemplate.opsForHash().put("hash-value", "key4", "中");
@@ -336,14 +336,14 @@ public class SampleRedisTestController {
         Object hashKey5 = redisTemplate.opsForHash().get("hash-value", "key5");//从redis取出反序列化，实际类型是Long
 
 
-        Pojo2RedisDto pojo2RedisDto = Pojo2RedisDto.builder()
+        ForTestPojo2RedisDto pojo2RedisDto = ForTestPojo2RedisDto.builder()
                 .id(1234534535354L)
                 .bl(false)
                 .s(null)
                 .name("just pojo哒哒哒")
                 .bi(bi)
                 .bd(bd)
-                .pojoType(PojoDtoEnum.SYSTEM.getValue())
+                .pojoType(ForRedisTestPojoDtoEnum.SYSTEM.getValue())
                 .pojoTime(LocalDateTime.now())
                 .build();
         //ObjectMapper将此Pojo对象序列化成
@@ -352,10 +352,10 @@ public class SampleRedisTestController {
         //"[\"com.sc.sample.redis.dto.Pojo2RedisDto\",{\"id\":1234534535354,\"bl\":false,\"s\":null,\"name\":\"just pojo\xe5\x93\x92\xe5\x93\x92\xe5\x93\x92\",\"bi\":[\"java.math.BigInteger\",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121],\"bd\":[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423],\"pojoType\":\"SYSTEM\",\"pojoTime\":\"2021-05-17 18:06:34\"}]"
         redisTemplate.opsForValue().set("Pojo", pojo2RedisDto);
         Object result = redisTemplate.opsForValue().get("Pojo");//result为Pojo2RedisDto类型
-        Pojo2RedisDto resultToUse = (Pojo2RedisDto) result;
+        ForTestPojo2RedisDto resultToUse = (ForTestPojo2RedisDto) result;
 
         
-        List<Pojo2RedisDto> pojoList = new ArrayList<>();
+        List<ForTestPojo2RedisDto> pojoList = new ArrayList<>();
         pojoList.add(pojo2RedisDto);
         //ObjectMapper将此List序列化成
         //"["java.util.ArrayList",[["com.sc.sample.redis.dto.Pojo2RedisDto",{"id":1234534535354,"bl":false,"s":null,"name":"just pojo哒哒哒","bi":["java.math.BigInteger",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121],"bd":["java.math.BigDecimal",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423],"pojoType":"SYSTEM","pojoTime":"2021-05-29 10:48:50"}]]]"
@@ -363,7 +363,7 @@ public class SampleRedisTestController {
         //"[\"java.util.ArrayList\",[[\"com.sc.sample.redis.dto.Pojo2RedisDto\",{\"id\":1234534535354,\"bl\":false,\"s\":null,\"name\":\"just pojo\xe5\x93\x92\xe5\x93\x92\xe5\x93\x92\",\"bi\":[\"java.math.BigInteger\",771123123123123123123213123213333333333333333333333333333333333313123123123123123213123123123123123123123121],\"bd\":[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423],\"pojoType\":\"SYSTEM\",\"pojoTime\":\"2021-05-29 10:48:50\"}]]]"
         redisTemplate.opsForValue().set("PojoList", pojoList);
         Object listResult = redisTemplate.opsForValue().get("PojoList");
-        List<Pojo2RedisDto> listToUse = (List<Pojo2RedisDto>) listResult;
+        List<ForTestPojo2RedisDto> listToUse = (List<ForTestPojo2RedisDto>) listResult;
         
         //the other 将bean写成redis 的 hash
         //1.将bean转化为Map<String, Object>
@@ -469,9 +469,9 @@ public class SampleRedisTestController {
         BigDecimal bdVal = flCustomSerializer.deserialize(bigDecimalBytes, BigDecimal.class);//反序列化为BigDecimal
 
 
-        genericRedisTemplate.opsForValue().set("Enum", flCustomSerializer.serializeAsBytes(PojoDtoEnum.SYSTEM.getValue()));//将Enum的value字段(String类型)序列化为 byte[], redis保存为 "Enum"->"\"SYSTEM\""
+        genericRedisTemplate.opsForValue().set("Enum", flCustomSerializer.serializeAsBytes(ForRedisTestPojoDtoEnum.SYSTEM.getValue()));//将Enum的value字段(String类型)序列化为 byte[], redis保存为 "Enum"->"\"SYSTEM\""
         byte[] enumBytes = genericRedisTemplate.opsForValue().get("Enum");//从redis取出，保存为 byte[]
-        PojoDtoEnum enumVal = PojoDtoEnum.getByValue(flCustomSerializer.deserialize(enumBytes, String.class));//反序列化并使用该String构造Enum
+        ForRedisTestPojoDtoEnum enumVal = ForRedisTestPojoDtoEnum.getByValue(flCustomSerializer.deserialize(enumBytes, String.class));//反序列化并使用该String构造Enum
 
 
         genericRedisTemplate.opsForValue().set("LocalDateTime", flCustomSerializer.serializeAsBytes(LocalDateTime.now()));//序列化为 byte[], redis保存为 "LocalDateTime"->"\"2021-05-16 22:05:41\""
@@ -497,7 +497,7 @@ public class SampleRedisTestController {
         //      5) "4123123122"
         genericRedisTemplate.delete("list-value");
         genericRedisTemplate.opsForList().leftPushAll("list-value", flCustomSerializer.serializeAsBytes(4123123122L),
-                flCustomSerializer.serializeAsBytes("中"), flCustomSerializer.serializeAsBytes(bd), flCustomSerializer.serializeAsBytes(PojoDtoEnum.SYSTEM.getValue()),
+                flCustomSerializer.serializeAsBytes("中"), flCustomSerializer.serializeAsBytes(bd), flCustomSerializer.serializeAsBytes(ForRedisTestPojoDtoEnum.SYSTEM.getValue()),
                 flCustomSerializer.serializeAsBytes(LocalDateTime.now()));
         Long length = genericRedisTemplate.opsForList().size("list-value");
         //从redis取出，保存为List<String>: "\"2021-05-16 14:03:19\"", "\"SYSTEM\"", "[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]", "\"中\"", "4123123122"
@@ -513,7 +513,7 @@ public class SampleRedisTestController {
         //       "key3"->"[\"java.math.BigDecimal\",8.9999011231312312312323123123123123123123123123123123123123123123123123123234434541353453645364356421432423]",
         //       "key4"->"\"\xe4\xb8\xad\"",
         //       "key1"->"\"SYSTEM\""
-        genericRedisTemplate.opsForHash().put("hash-value", "key1", flCustomSerializer.serializeAsBytes(PojoDtoEnum.SYSTEM.getValue()));
+        genericRedisTemplate.opsForHash().put("hash-value", "key1", flCustomSerializer.serializeAsBytes(ForRedisTestPojoDtoEnum.SYSTEM.getValue()));
         genericRedisTemplate.opsForHash().put("hash-value", "key2", flCustomSerializer.serializeAsBytes(LocalDateTime.now()));
         genericRedisTemplate.opsForHash().put("hash-value", "key3", flCustomSerializer.serializeAsBytes(bd));
         genericRedisTemplate.opsForHash().put("hash-value", "key4", flCustomSerializer.serializeAsBytes("中"));
@@ -535,14 +535,14 @@ public class SampleRedisTestController {
         Long hashKey5Val = flCustomSerializer.deserialize(hashKey5, Long.class);//反序列化为 Long
 
 
-        Pojo2RedisDto pojo2RedisDto = Pojo2RedisDto.builder()
+        ForTestPojo2RedisDto pojo2RedisDto = ForTestPojo2RedisDto.builder()
                 .id(1234534535354L)
                 .bl(false)
                 .s(null)
                 .name("just pojo哒哒哒")
                 .bi(bi)
                 .bd(bd)
-                .pojoType(PojoDtoEnum.SYSTEM.getValue())
+                .pojoType(ForRedisTestPojoDtoEnum.SYSTEM.getValue())
                 .pojoTime(LocalDateTime.now())
                 .build();
         //1.序列化Pojo为 byte[]
@@ -553,13 +553,13 @@ public class SampleRedisTestController {
         //3.从redis取出，保存为byte[]
         byte[] result = genericRedisTemplate.opsForValue().get("Pojo");
         //4.反序列化为Pojo
-        Pojo2RedisDto pojoDe = flCustomSerializer.deserialize(result, Pojo2RedisDto.class);
+        ForTestPojo2RedisDto pojoDe = flCustomSerializer.deserialize(result, ForTestPojo2RedisDto.class);
 
         //the other 将bean写成redis 的 hash
         //3.从redis取得Map，Map中value是byte[]
         Map<Object, Object> hashVal = genericRedisTemplate.opsForHash().entries("PojoHash");
         //4.将Map转化为bean
-        Pojo2RedisDto bean = map2Bean(hashVal, Pojo2RedisDto.class, flCustomSerializer);
+        ForTestPojo2RedisDto bean = map2Bean(hashVal, ForTestPojo2RedisDto.class, flCustomSerializer);
 
         return JsonResult.buildSuccessResult(pojoDe);
     }
@@ -614,7 +614,7 @@ public class SampleRedisTestController {
         Object hashKey5 = redisTemplate.opsForHash().get("hash-value", "key5");//从redis取出反序列化，实际类型是Long
 
         Object result = redisTemplate.opsForValue().get("Pojo");
-        Pojo2RedisDto resultToUse = (Pojo2RedisDto) result;
+        ForTestPojo2RedisDto resultToUse = (ForTestPojo2RedisDto) result;
 
 
         return JsonResult.buildSuccessResult("测试成功");
@@ -681,7 +681,7 @@ public class SampleRedisTestController {
         BigDecimal bigDecimalObject = new BigDecimal(flCustomSerializer.deserialize(bigDecimalObjectBytes, String.class)); //2、如果写入类型信息
 
 
-        redisTemplate.opsForValue().set("Enum", PojoDtoEnum.SYSTEM.getValue());
+        redisTemplate.opsForValue().set("Enum", ForRedisTestPojoDtoEnum.SYSTEM.getValue());
         byte[] enumStringObjectBytes = genericRedisTemplate.opsForValue().get("Enum");
         String enumStringObject = flCustomSerializer.deserialize(enumStringObjectBytes, String.class);
 
@@ -700,12 +700,12 @@ public class SampleRedisTestController {
 
 
         redisTemplate.delete("list-value");
-        redisTemplate.opsForList().leftPushAll("list-value", 4123123122L, "中", bd, PojoDtoEnum.SYSTEM.getValue(), LocalDateTime.now());
+        redisTemplate.opsForList().leftPushAll("list-value", 4123123122L, "中", bd, ForRedisTestPojoDtoEnum.SYSTEM.getValue(), LocalDateTime.now());
         Long length = genericRedisTemplate.opsForList().size("list-value");
         List<byte[]> listValues = genericRedisTemplate.opsForList().range("list-value", 0, length);
 
 
-        redisTemplate.opsForHash().put("hash-value", "key1", PojoDtoEnum.SYSTEM.getValue());
+        redisTemplate.opsForHash().put("hash-value", "key1", ForRedisTestPojoDtoEnum.SYSTEM.getValue());
         redisTemplate.opsForHash().put("hash-value", "key2", LocalDateTime.now());
         redisTemplate.opsForHash().put("hash-value", "key3", bd);
         redisTemplate.opsForHash().put("hash-value", "key4", "中");
@@ -728,14 +728,14 @@ public class SampleRedisTestController {
         Long hashKey5Val = flCustomSerializer.deserialize(hashKey5, Long.class);//反序列化为 Long
 
 
-        Pojo2RedisDto pojo2RedisDto = Pojo2RedisDto.builder()
+        ForTestPojo2RedisDto pojo2RedisDto = ForTestPojo2RedisDto.builder()
                 .id(1234534535354L)
                 .bl(false)
                 .s(null)
                 .name("just pojo哒哒哒")
                 .bi(bi)
                 .bd(bd)
-                .pojoType(PojoDtoEnum.SYSTEM.getValue())
+                .pojoType(ForRedisTestPojoDtoEnum.SYSTEM.getValue())
                 .pojoTime(LocalDateTime.now())
                 .build();
         redisTemplate.opsForValue().set("Pojo", pojo2RedisDto);
@@ -743,7 +743,7 @@ public class SampleRedisTestController {
         //Pojo2RedisDto resultToUse = flCustomSerializer.deserialize(resultBytes, Pojo2RedisDto.class);  //2、不写入类型信息报错
 
 
-        List<Pojo2RedisDto> pojoList = new ArrayList<>();
+        List<ForTestPojo2RedisDto> pojoList = new ArrayList<>();
         pojoList.add(pojo2RedisDto);
         redisTemplate.opsForValue().set("PojoList", pojoList);
         byte[] listResult = genericRedisTemplate.opsForValue().get("PojoList");
@@ -756,7 +756,7 @@ public class SampleRedisTestController {
 
 
     @PostMapping("del")
-    public JsonResult del(@RequestBody @Valid SampleRedisTestDelDto redisTestDelDto) {
+    public JsonResult del(@RequestBody @Valid ForRedisTestDelDto redisTestDelDto) {
         Boolean result = redisTemplate.delete(redisTestDelDto.getKey());
         if(result) return JsonResult.buildSuccessResult("删除成功,key="+redisTestDelDto.getKey());
         else return JsonResult.buildFailedResult("删除失败,key="+redisTestDelDto.getKey());

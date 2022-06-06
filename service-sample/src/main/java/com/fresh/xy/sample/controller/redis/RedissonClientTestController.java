@@ -2,8 +2,8 @@ package com.fresh.xy.sample.controller.redis;
 
 
 import com.fresh.common.result.JsonResult;
-import com.fresh.xy.redis.dto.RedissonPojoDto;
-import com.fresh.xy.redis.enums.PojoDtoEnum;
+import com.fresh.xy.redis.dto.ForRedissonTestPojoDto;
+import com.fresh.xy.redis.enums.ForRedisTestPojoDtoEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
@@ -66,32 +66,32 @@ public class RedissonClientTestController {
         localDateTimeBucket.set(LocalDateTime.now());
         LocalDateTime localDateTimeObj = localDateTimeBucket.get();
 
-        RedissonPojoDto pojo = RedissonPojoDto.builder()
+        ForRedissonTestPojoDto pojo = ForRedissonTestPojoDto.builder()
                 .id(1234534535354L)
                 .bl(false)
                 .s(null)
                 .name("just pojo哒哒哒")
                 .bd(bd)
-                .pojoType(PojoDtoEnum.SYSTEM.getValue())
+                .pojoType(ForRedisTestPojoDtoEnum.SYSTEM.getValue())
                 .pojoTime(LocalDateTime.now())
                 .build();
-        RBucket<RedissonPojoDto> pojoBucket = redissonClient.getBucket("PojoBucket");
+        RBucket<ForRedissonTestPojoDto> pojoBucket = redissonClient.getBucket("PojoBucket");
         pojoBucket.set(pojo);
-        RedissonPojoDto pojoObj = pojoBucket.get();
+        ForRedissonTestPojoDto pojoObj = pojoBucket.get();
 
 
-        List<RedissonPojoDto> list = new ArrayList<>();
+        List<ForRedissonTestPojoDto> list = new ArrayList<>();
         list.add(pojo);
-        RBucket<List<RedissonPojoDto>> pojoListBucket = redissonClient.getBucket("PojoListBucket");
+        RBucket<List<ForRedissonTestPojoDto>> pojoListBucket = redissonClient.getBucket("PojoListBucket");
         pojoListBucket.set(list);
-        List<RedissonPojoDto> pojoListObj = pojoListBucket.get();
+        List<ForRedissonTestPojoDto> pojoListObj = pojoListBucket.get();
 
 
-        Map<String, RedissonPojoDto> map = new HashMap<>();
+        Map<String, ForRedissonTestPojoDto> map = new HashMap<>();
         map.put("pojo1", pojo);
-        RBucket<Map<String, RedissonPojoDto>> pojoMapBucket = redissonClient.getBucket("PojoMapBucket");
+        RBucket<Map<String, ForRedissonTestPojoDto>> pojoMapBucket = redissonClient.getBucket("PojoMapBucket");
         pojoMapBucket.set(map);
-        Map<String, RedissonPojoDto> pojoMapObj = pojoMapBucket.get();
+        Map<String, ForRedissonTestPojoDto> pojoMapObj = pojoMapBucket.get();
 
         return JsonResult.buildSuccessResult(pojo);
     }

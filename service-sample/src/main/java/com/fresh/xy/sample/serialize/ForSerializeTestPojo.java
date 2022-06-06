@@ -1,6 +1,6 @@
 package com.fresh.xy.sample.serialize;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fresh.xy.redis.enums.ForRedisTestPojoEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,17 +17,13 @@ import java.util.Date;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonInclude(value = JsonInclude.Include.NON_NULL)
-public class PojoAno {
+public class ForSerializeTestPojo {
     private Boolean bl;
     private Long id;
     private String name;
-    //private PojoAnoEnum pojoAnoEnum;
-    private String pojoAnoEnum;  //使用PojoAnoEnum的value值，@see ScanTypeEnum中说明
-    private String pojoAnoEnumValue;
+    private ForRedisTestPojoEnum pojoEnum;
     private LocalDateTime pojoTime;
     private BigInteger bi;
     private BigDecimal bd;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Date dt;
 }
