@@ -31,7 +31,7 @@ public class TxTextService1Impl extends ServiceImpl<SampleScanMapper, SampleScan
         scan.setName("txOne_" + System.currentTimeMillis());
         this.save(scan);
 
-        /*
+        /* 同一事务中使用同一个Connection
         txOne上@Transactional前置处理：开启“事务”
         txOne执行... 如果发生异常，txOne上@Transactional后置处理：执行rollback
         调用txTwo
@@ -56,7 +56,7 @@ public class TxTextService1Impl extends ServiceImpl<SampleScanMapper, SampleScan
         //txTextService2.txTwo2(scan);
 
 
-        /*
+        /* 同一事务中使用同一个Connection，开启新事物使用新的Connection
         txOne上@Transactional前置处理：开启“事务”
         txOne执行..., 如果发生异常，txOne上@Transactional后置处理：执行rollback
         调用txTwo3
@@ -86,7 +86,7 @@ public class TxTextService1Impl extends ServiceImpl<SampleScanMapper, SampleScan
         }
 
 
-        /*
+        /* 嵌套事务使用外层事务的Connection，save point机制
         txOne上@Transactional前置处理：开启“事务”
         txOne执行..., 如果发生异常，txOne上@Transactional后置处理：执行rollback
         调用txTwo5
