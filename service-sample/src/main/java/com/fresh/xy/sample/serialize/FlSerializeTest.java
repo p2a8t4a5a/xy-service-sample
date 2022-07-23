@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fresh.common.exception.BizException;
 import com.fresh.common.utils.JacksonUtils;
 import com.fresh.common.utils.ReflectUtils;
 import com.fresh.xy.redis.enums.ForRedisTestPojoAnoEnum;
@@ -14,10 +15,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FlSerializeTest {
 
@@ -270,12 +268,26 @@ public class FlSerializeTest {
          */
         ForSerializeTestPojoAno pojoAnoVal = om.readValue(pojoAnoSe, ForSerializeTestPojoAno.class);
 
-        Map<String, Object> pojoMap = ReflectUtils.bean2Map(pojoAnoVal);
+        Map<String, Object> pojoMap = bean2Map(pojoAnoVal);
 
 
         System.out.println("basic");
     }
 
+    private static Map<String, Object> bean2Map(Object bean) {
+        if(bean == null) return null;
+        Map<String, Object> map = new HashMap<>();
+
+        ReflectUtils.findDeclaredFieldConsumer(bean.getClass(), field -> {
+            try {
+                ReflectUtils.makeAccessible(field);
+                map.put(field.getName(), field.get(bean));//浅拷贝
+            } catch (IllegalAccessException e) {
+                throw new BizException(() -> e.getMessage());
+            }
+        });
+        return map;
+    }
 
     public static void forRedisUse() throws Exception {
 

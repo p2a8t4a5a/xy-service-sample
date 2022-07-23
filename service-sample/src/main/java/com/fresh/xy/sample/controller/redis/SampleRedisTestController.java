@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -367,7 +368,7 @@ public class SampleRedisTestController {
         
         //the other 将bean写成redis 的 hash
         //1.将bean转化为Map<String, Object>
-        Map<String, Object> pojoMap = ReflectUtils.bean2Map(resultToUse);
+        Map<String, Object> pojoMap = bean2Map(resultToUse);
         //2.将Map<String, Object>写入redis hash, Map中每一个value都使用ObjectMapper序列化
         //127.0.0.1:6380> hgetall PojoHash
         // "pojoType"->"\"SYSTEM\""
@@ -389,6 +390,20 @@ public class SampleRedisTestController {
         return JsonResult.buildSuccessResult(resultToUse);
     }
 
+    private static Map<String, Object> bean2Map(Object bean) {
+        if(bean == null) return null;
+        Map<String, Object> map = new HashMap<>();
+
+        ReflectUtils.findDeclaredFieldConsumer(bean.getClass(), field -> {
+            try {
+                ReflectUtils.makeAccessible(field);
+                map.put(field.getName(), field.get(bean));//浅拷贝
+            } catch (IllegalAccessException e) {
+                throw new BizException(() -> e.getMessage());
+            }
+        });
+        return map;
+    }
 
     /**
      * 第三种操作方法为
